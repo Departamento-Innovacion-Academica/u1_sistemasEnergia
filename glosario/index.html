@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glosario Energético - Futurista Sutil</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #03223D;
+            --secondary: #0A4D7A;
+            --accent: #4A90B8; /* Cian apagado, elegante y sofisticado */
+            --bg: #F4F8FB;
+            --text-main: #1a1a1a;
+            --text-muted: #4A5568;
+            --glass-bg: rgba(255, 255, 255, 0.65);
+            --glass-border: rgba(74, 144, 184, 0.25);
+            --shadow: 0 8px 32px rgba(3, 34, 61, 0.1);
+            --shadow-hover: 0 15px 40px rgba(3, 34, 61, 0.2), 0 0 15px rgba(74, 144, 184, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg);
+            background-image: 
+                linear-gradient(rgba(3, 34, 61, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(3, 34, 61, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            color: var(--text-main);
+            padding: 60px 20px;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* --- FILTROS --- */
+        .filters {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 60px;
+        }
+
+        .filter-btn {
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid var(--glass-border);
+            color: var(--secondary);
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .filter-btn:hover {
+            border-color: var(--accent);
+            color: var(--primary);
+            box-shadow: 0 0 12px rgba(74, 144, 184, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .filter-btn.active {
+            background: var(--primary);
+            border-color: var(--accent);
+            color: #ffffff;
+            box-shadow: 0 4px 20px rgba(3, 34, 61, 0.4), 0 0 15px rgba(74, 144, 184, 0.3);
+        }
+
+        /* --- GRID DE TARJETAS --- */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+            perspective: 1000px;
+        }
+
+        .card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 30px;
+            cursor: pointer;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+            animation: fadeInUp 0.8s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+            opacity: 0;
+            transform-style: preserve-3d;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(74, 144, 184, 0.08) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 0.5s;
+            pointer-events: none;
+        }
+
+        .card:hover {
+            transform: translateY(-10px) rotateX(5deg) rotateY(-5deg) scale(1.02);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--accent);
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            z-index: 2;
+            position: relative;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary);
+            line-height: 1.4;
+            letter-spacing: -0.5px;
+        }
+
+        .card-badge {
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 6px 14px;
+            border-radius: 20px;
+            background: rgba(74, 144, 184, 0.12);
+            border: 1px solid rgba(74, 144, 184, 0.3);
+            color: var(--secondary);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            white-space: nowrap;
+        }
+
+        .card-content {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            font-weight: 300;
+            line-height: 1.7;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: max-height 0.6s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.4s ease;
+            z-index: 2;
+            position: relative;
+        }
+
+        .card.expanded .card-content {
+            max-height: 600px;
+            opacity: 1;
+            margin-top: 20px;
+        }
+
+        .card.expanded {
+            transform: scale(1.03);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--accent);
+        }
+
+        .card-bibliography {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px dashed rgba(74, 144, 184, 0.3);
+            font-size: 0.8rem;
+            font-style: italic;
+            color: var(--secondary);
+            opacity: 0.9;
+            z-index: 2;
+            position: relative;
+        }
+
+        /* --- ANIMACIONES --- */
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .filters { gap: 10px; }
+            .filter-btn { padding: 10px 20px; font-size: 0.75rem; }
+            .grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="filters">
+        <button class="filter-btn active" onclick="filterCards('all', this)">Todos</button>
+        <button class="filter-btn" onclick="filterCards('renovable', this)">Renovables</button>
+        <button class="filter-btn" onclick="filterCards('no-renovable', this)">No Renovables</button>
+        <button class="filter-btn" onclick="filterCards('sistema', this)">Sistemas y Vectores</button>
+    </div>
+
+    <div class="grid" id="glossaryGrid">
+        <!-- Las tarjetas se generan aquí -->
+    </div>
+
+    <script>
+        const terms = [
+            { title: "Combustibles fósiles", category: "no-renovable", badge: "No Renovable", definition: "Recursos no renovables (petróleo, carbón, gas natural) formados por descomposición orgánica durante millones de años.", bibliography: "Twidell & Weir, 2015" },
+            { title: "Energía de biomasa", category: "renovable", badge: "Renovable", definition: "Energía renovable obtenida de materia orgánica mediante procesos termoquímicos o biológicos para generación de calor, electricidad y biocombustibles.", bibliography: "Solé, 2014" },
+            { title: "Energía del hidrógeno", category: "sistema", badge: "Sistema / Vector", definition: "Sistema energético que utiliza hidrógeno como portador de energía, producido mediante electrólisis o reformado de hidrocarburos, para generación eléctrica o movilidad.", bibliography: "Linares & Moratilla, 2007" },
+            { title: "Energía eólica", category: "renovable", badge: "Renovable", definition: "Energía renovable obtenida del viento mediante aerogeneradores, requiriendo velocidades mínimas sostenidas para viabilidad comercial.", bibliography: "Solé, 2014" },
+            { title: "Energía geotérmica", category: "renovable", badge: "Renovable", definition: "Calor interno de la Tierra aprovechable como energía renovable, presente en forma de vapor, agua caliente o rocas secas calientes.", bibliography: "Jarabo & Elortegui, 2009; Ellabban & otros, 2014" },
+            { title: "Energía hidráulica", category: "renovable", badge: "Renovable", definition: "Energía renovable que aprovecha el movimiento o altura del agua para generar electricidad mediante turbinas.", bibliography: "Ellabban & otros, 2014" },
+            { title: "Energía nuclear", category: "no-renovable", badge: "No Renovable", definition: "Tecnología de generación eléctrica que aprovecha la fisión controlada de núcleos atómicos pesados, principalmente uranio-235 o plutonio-239, con bajas emisiones de carbono.", bibliography: "Nuclear Energy Agency, 2024; Poenaru & otros, 2022" },
+            { title: "Energía oceánica", category: "renovable", badge: "Renovable", definition: "Conjunto de tecnologías que aprovechan el potencial energético de los mares y océanos para generación eléctrica, incluyendo mareas, olas y gradientes térmicos.", bibliography: "Jarabo & Elortegui, 2009; Ellabban & otros, 2014" },
+            { title: "Energía primaria", category: "sistema", badge: "Sistema", definition: "Recursos energéticos obtenidos directamente de la naturaleza sin transformación previa, como combustibles fósiles, nucleares o renovables.", bibliography: "Jarabo & Elortegui, 2009" },
+            { title: "Energía secundaria", category: "sistema", badge: "Sistema", definition: "Formas energéticas resultantes de la transformación técnica de fuentes primarias, como electricidad o combustibles procesados.", bibliography: "Jarabo & Elortegui, 2009" },
+            { title: "Energía solar", category: "renovable", badge: "Renovable", definition: "Fuente renovable que convierte radiación solar en energía térmica o eléctrica mediante tecnologías fotovoltaicas y térmicas.", bibliography: "Solé, 2014" },
+            { title: "Energías renovables", category: "renovable", badge: "Renovable", definition: "Fuentes inagotables como solar, eólica o hidráulica, regeneradas naturalmente a corto plazo.", bibliography: "Twidell & Weir, 2015" },
+            { title: "Sistema energético", category: "sistema", badge: "Sistema", definition: "Red integrada que abarca extracción, conversión, distribución y consumo final de energía.", bibliography: "Twidell & Weir, 2015" },
+            { title: "Vector energético", category: "sistema", badge: "Sistema / Vector", definition: "Medio para transportar y almacenar energía, como electricidad o combustibles líquidos/gaseosos, que facilita la distribución de la energía entre fuentes y usos finales.", bibliography: "Orecchini, 2006" }
+        ];
+
+        const grid = document.getElementById('glossaryGrid');
+
+        function renderCards(category = 'all') {
+            grid.innerHTML = '';
+            const filteredTerms = category === 'all' ? terms : terms.filter(term => term.category === category);
+
+            filteredTerms.forEach((term, index) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.style.animationDelay = `${index * 0.12}s`;
+                card.innerHTML = `
+                    <div class="card-header">
+                        <h3 class="card-title">${term.title}</h3>
+                        <span class="card-badge">${term.badge}</span>
+                    </div>
+                    <p class="card-content">${term.definition}</p>
+                    <div class="card-bibliography" style="display: none;">${term.bibliography}</div>
+                `;
+
+                card.addEventListener('click', () => {
+                    card.classList.toggle('expanded');
+                    const bib = card.querySelector('.card-bibliography');
+                    bib.style.display = card.classList.contains('expanded') ? 'block' : 'none';
+                });
+
+                grid.appendChild(card);
+            });
+        }
+
+        function filterCards(category, btn) {
+            const buttons = document.querySelectorAll('.filter-btn');
+            buttons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderCards(category);
+        }
+
+        renderCards('all');
+    </script>
+</body>
+</html>
