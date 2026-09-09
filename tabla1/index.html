@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tabla de Celdas de Combustible - Con Scroll Automático</title>
+    <title>Tabla de Celdas de Combustible - Sin Fondo y Centrada</title>
     <style>
         body, html {
             margin: 0;
@@ -13,12 +13,13 @@
             background-color: #f4f7f6;
             font-family: 'Segoe UI', Arial, sans-serif;
             box-sizing: border-box;
+            overflow: hidden;
         }
 
-        /* Contenedor flexible que llena la pantalla */
+        /* Contenedor principal: Centra la tabla en la pantalla */
         .contenedor-flex {
             width: 100%;
-            height: 100%;
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -26,42 +27,38 @@
             box-sizing: border-box;
         }
 
-        /* El área de scroll: tiene un ancho/alto máximos y genera barras si no cabe */
+        /* Contenedor de la tabla: Solo scroll vertical */
         .contenedor-scroll {
             width: 100%;
+            max-width: 1300px;
             height: 100%;
-            max-width: 1400px;
             max-height: 900px;
-            overflow: auto; /* Genera barras automáticamente */
-            background-color: #ffffff;
-            border-radius: 20px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.12);
-            /* Scroll interno suave */
+            overflow-x: hidden; /* Elimina la barra horizontal */
+            overflow-y: auto;   /* Solo scroll vertical */
             scrollbar-width: thin; 
-            scrollbar-color: #b0b8c1 #f0f0f0;
+            scrollbar-color: #b0b8c1 rgba(0,0,0,0.05);
         }
 
-        /* Estilo de la barra de desplazamiento en WebKit (Chrome, Safari, Edge) */
-        .contenedor-scroll::-webkit-scrollbar { width: 10px; height: 10px; }
-        .contenedor-scroll::-webkit-scrollbar-track { background: #f0f0f0; border-radius: 10px; }
+        .contenedor-scroll::-webkit-scrollbar { width: 8px; }
+        .contenedor-scroll::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); border-radius: 10px; }
         .contenedor-scroll::-webkit-scrollbar-thumb { background: #b0b8c1; border-radius: 10px; }
-        .contenedor-scroll::-webkit-scrollbar-thumb:hover { background: #8a959e; }
 
-        /* El SVG tiene un tamaño fijo en píxeles para que el scroll se active si no cabe */
+        /* El SVG se ajusta al ancho del contenedor, manteniendo su proporción */
         svg {
             display: block;
-            width: 1100px;
-            height: 850px;
-            max-width: none; /* Permite que crezca el scroll */
+            width: 100%;
+            height: auto;
+            max-width: 1100px;
+            margin: 0 auto; /* Centrado horizontal dentro del scroll */
         }
 
         .header-bg { fill: #3c6e8f; }
         .header-text { font-family: 'Segoe UI', Arial, sans-serif; font-size: 17px; font-weight: bold; fill: #ffffff; text-anchor: middle; dominant-baseline: middle; }
         
-        .label-bg { fill: #f2f7f9; }
+        .label-bg { fill: rgba(242, 247, 249, 0.8); }
         .label-text { font-family: 'Segoe UI', Arial, sans-serif; font-size: 16px; font-weight: bold; fill: #1a1a1a; text-anchor: start; dominant-baseline: middle; }
         
-        .cell-bg { fill: #ffffff; }
+        .cell-bg { fill: rgba(255, 255, 255, 0.7); }
         .cell-text { font-family: 'Segoe UI', Arial, sans-serif; font-size: 15px; fill: #1a1a1a; text-anchor: middle; dominant-baseline: middle; }
 
         .grid-line { stroke: #d3dde3; stroke-width: 1.5; fill: none; }
