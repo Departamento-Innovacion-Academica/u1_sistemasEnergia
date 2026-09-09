@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejercicios de Repaso - Sistema Energético</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #f4f7f6;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            box-sizing: border-box;
+            overflow-x: hidden;
+        }
+
+        .contenedor-flex {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: clamp(20px, 5vw, 60px);
+            box-sizing: border-box;
+        }
+
+        .contenedor-scroll {
+            width: 100%;
+            max-width: 800px;
+            height: auto;
+            max-height: 90vh;
+            overflow-y: auto;
+            background-color: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+            scrollbar-width: thin; 
+            scrollbar-color: #b0b8c1 #f0f0f0;
+            padding: 40px;
+            box-sizing: border-box;
+        }
+
+        .contenedor-scroll::-webkit-scrollbar { width: 10px; }
+        .contenedor-scroll::-webkit-scrollbar-track { background: #f0f0f0; border-radius: 10px; }
+        .contenedor-scroll::-webkit-scrollbar-thumb { background: #b0b8c1; border-radius: 10px; }
+
+        /* Estilos de encabezado */
+        .header-quiz {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e0e7eb;
+        }
+        .header-quiz h1 {
+            color: #3c6e8f;
+            font-size: 24px;
+            margin: 0 0 10px 0;
+        }
+        .header-quiz p {
+            color: #6b7a89;
+            font-size: 15px;
+            font-style: italic;
+            margin: 0;
+        }
+
+        /* Barra de progreso superior */
+        .barra-progreso {
+            width: 100%;
+            height: 8px;
+            background-color: #e0e7eb;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        .relleno-progreso {
+            height: 100%;
+            background-color: #5a9e6f; /* Verde del flat design */
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        /* Estilos de preguntas */
+        .pregunta {
+            display: none;
+            animation: fadeSlide 0.5s ease forwards;
+        }
+        .pregunta.activa {
+            display: block;
+        }
+
+        @keyframes fadeSlide {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .texto-pregunta {
+            font-size: 18px;
+            font-weight: bold;
+            color: #1a1a1a;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        /* Opciones */
+        .opciones-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .opcion {
+            background-color: #f8fafb;
+            border: 2px solid #e0e7eb;
+            border-radius: 12px;
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            color: #1a1a1a;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .opcion:hover {
+            background-color: #f2f7f9;
+            border-color: #3c6e8f;
+        }
+
+        .opcion.seleccionada {
+            border-color: #3c6e8f;
+            background-color: #eaf3f8;
+        }
+
+        .opcion.correcta {
+            border-color: #5a9e6f;
+            background-color: #eaf7ec;
+            color: #2e6e3e;
+        }
+
+        .opcion.incorrecta {
+            border-color: #d9534f;
+            background-color: #fcebea;
+            color: #a13a37;
+        }
+
+        .opcion.deshabilitada {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .letra-opcion {
+            font-weight: bold;
+            color: #3c6e8f;
+            font-size: 18px;
+            min-width: 25px;
+        }
+
+        /* Realimentación */
+        .feedback {
+            display: none;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-size: 14px;
+            line-height: 1.6;
+            border-left: 4px solid;
+            animation: fadeSlide 0.5s ease forwards;
+        }
+
+        .feedback.visible {
+            display: block;
+        }
+
+        .feedback.correcto {
+            background-color: #eaf7ec;
+            border-color: #5a9e6f;
+            color: #2e6e3e;
+        }
+
+        .feedback.incorrecto {
+            background-color: #fcebea;
+            border-color: #d9534f;
+            color: #a13a37;
+        }
+
+        .feedback strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        /* Botones */
+        .btn-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .btn {
+            background-color: #3c6e8f;
+            color: #ffffff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .btn:hover {
+            background-color: #2a4d66;
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            background-color: #b0b8c1;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Resultados */
+        .resultado-final {
+            display: none;
+            text-align: center;
+            padding: 20px 0;
+            animation: fadeSlide 0.6s ease forwards;
+        }
+
+        .resultado-final h2 {
+            color: #3c6e8f;
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+
+        .porcentaje {
+            font-size: 48px;
+            font-weight: bold;
+            color: #5a9e6f;
+            margin: 10px 0;
+        }
+
+        .mensaje-final {
+            font-size: 18px;
+            color: #6b7a89;
+            margin-bottom: 30px;
+        }
+
+        .btn-reintentar {
+            background-color: #f5b041; /* Ámbar del estilo */
+            color: #1a1a1a;
+        }
+
+        .btn-reintentar:hover {
+            background-color: #e09b2d;
+        }
+
+        /* Tarjeta de resultados */
+        .tarjeta-resultado {
+            background-color: #f2f7f9;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: inset 0 0 0 2px #e0e7eb;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="contenedor-flex">
+        <div class="contenedor-scroll">
+            
+            <div class="header-quiz">
+                <h1>Ejercicios de Repaso</h1>
+                <p>Haga clic en la opción que considere correcta</p>
+            </div>
+
+            <div class="barra-progreso">
+                <div class="relleno-progreso" id="barraProgreso"></div>
+            </div>
+
+            <!-- Contenedor de preguntas -->
+            <div id="contenedorPreguntas">
+
+                <!-- Pregunta 1 -->
+                <div class="pregunta activa" id="pregunta1">
+                    <div class="texto-pregunta">
+                        1. La electricidad es un vector energético que permite transportar energía desde los centros de producción hasta los puntos de consumo.
+                    </div>
+                    <div class="opciones-container">
+                        <div class="opcion" onclick="seleccionarOpcion(1, 'Verdadero', this)">
+                            <span class="letra-opcion">V</span> Verdadero
+                        </div>
+                        <div class="opcion" onclick="seleccionarOpcion(1, 'Falso', this)">
+                            <span class="letra-opcion">F</span> Falso
+                        </div>
+                    </div>
+                    <div class="feedback correcto" id="feedback1">
+                        <strong>¡Correcto!</strong>
+                        Un vector energético, como la electricidad, facilita el transporte y uso de la energía entre diferentes etapas del sistema energético (Orecchini, 2006).
+                    </div>
+                    <div class="btn-container">
+                        <button class="btn" disabled>Anterior</button>
+                        <button class="btn" id="btnSiguiente1" onclick="siguientePregunta(1, 2)" disabled>Siguiente</button>
+                    </div>
+                </div>
+
+                <!-- Pregunta 2 -->
+                <div class="pregunta" id="pregunta2">
+                    <div class="texto-pregunta">
+                        2. Las centrales hidroeléctricas de bombeo funcionan como sistemas de almacenamiento de energía, aunque consumen más energía de la que generan.
+                    </div>
+                    <div class="opciones-container">
+                        <div class="opcion" onclick="seleccionarOpcion(2, 'Verdadero', this)">
+                            <span class="letra-opcion">V</span> Verdadero
+                        </div>
+                        <div class="opcion" onclick="seleccionarOpcion(2, 'Falso', this)">
+                            <span class="letra-opcion">F</span> Falso
+                        </div>
+                    </div>
+                    <div class="feedback correcto" id="feedback2">
+                        <strong>¡Correcto!</strong>
+                        Este tipo de central almacena energía al bombear agua a un embalse superior durante baja demanda y genera electricidad en picos, aunque con pérdidas netas en el balance energético (Ellabban & otros, 2014).
+                    </div>
+                    <div class="btn-container">
+                        <button class="btn" onclick="preguntaAnterior(2, 1)">Anterior</button>
+                        <button class="btn" id="btnSiguiente2" onclick="siguientePregunta(2, 3)" disabled>Siguiente</button>
+                    </div>
+                </div>
+
+                <!-- Pregunta 3 -->
+                <div class="pregunta" id="pregunta3">
+                    <div class="texto-pregunta">
+                        3. ¿Cuál de los siguientes procesos permite transformar el gas natural en combustibles líquidos?
+                    </div>
+                    <div class="opciones-container">
+                        <div class="opcion" onclick="seleccionarOpcion(3, 'A', this)"><span class="letra-opcion">A)</span> Licuefacción</div>
+                        <div class="opcion" onclick="seleccionarOpcion(3, 'B', this)"><span class="letra-opcion">B)</span> Reformado</div>
+                        <div class="opcion" onclick="seleccionarOpcion(3, 'C', this)"><span class="letra-opcion">C)</span> Conversión GTL</div>
+                        <div class="opcion" onclick="seleccionarOpcion(3, 'D', this)"><span class="letra-opcion">D)</span> Procesamiento</div>
+                    </div>
+                    <div class="feedback correcto" id="feedback3">
+                        <strong>¡Correcto!</strong>
+                        La conversión Gas-to-Liquids (GTL) transforma el gas natural en combustibles líquidos mediante reformado y síntesis, obteniendo como productos diésel sintético de alta calidad (Mokhatab, Poe, & Mak, 2015).
+                    </div>
+                    <div class="btn-container">
+                        <button class="btn" onclick="preguntaAnterior(3, 2)">Anterior</button>
+                        <button class="btn" id="btnSiguiente3" onclick="siguientePregunta(3, 4)" disabled>Siguiente</button>
+                    </div>
+                </div>
+
+                <!-- Pregunta 4 -->
+                <div class="pregunta" id="pregunta4">
+                    <div class="texto-pregunta">
+                        4. ¿Cuál de los siguientes métodos de almacenamiento de hidrógeno implica mantenerlo a temperaturas criogénicas cercanas a -253 °C?
+                    </div>
+                    <div class="opciones-container">
+                        <div class="opcion" onclick="seleccionarOpcion(4, 'A', this)"><span class="letra-opcion">A)</span> Almacenamiento en hidruros metálicos.</div>
+                        <div class="opcion" onclick="seleccionarOpcion(4, 'B', this)"><span class="letra-opcion">B)</span> Hidrógeno comprimido.</div>
+                        <div class="opcion" onclick="seleccionarOpcion(4, 'C', this)"><span class="letra-opcion">C)</span> Hidrógeno líquido.</div>
+                        <div class="opcion" onclick="seleccionarOpcion(4, 'D', this)"><span class="letra-opcion">D)</span> Hidrógeno adsorbido en materiales porosos.</div>
+                    </div>
+                    <div class="feedback correcto" id="feedback4">
+                        <strong>¡Correcto!</strong>
+                        El hidrógeno líquido requiere mantener una temperatura inferior a 20 K para conservar su estado, siendo utilizado principalmente en almacenamiento a gran escala y transporte marítimo (Linares & Moratilla, 2007).
+                    </div>
+                    <div class="btn-container">
+                        <button class="btn" onclick="preguntaAnterior(4, 3)">Anterior</button>
+                        <button class="btn" id="btnSiguiente4" onclick="siguientePregunta(4, 5)" disabled>Siguiente</button>
+                    </div>
+                </div>
+
+                <!-- Pregunta 5 -->
+                <div class="pregunta" id="pregunta5">
+                    <div class="texto-pregunta">
+                        5. ¿Qué tipo de tecnologías se espera que ayuden a mejorar la eficiencia en el uso y gestión de la energía en el futuro?
+                    </div>
+                    <div class="opciones-container">
+                        <div class="opcion" onclick="seleccionarOpcion(5, 'A', this)"><span class="letra-opcion">A)</span> Herramientas manuales tradicionales.</div>
+                        <div class="opcion" onclick="seleccionarOpcion(5, 'B', this)"><span class="letra-opcion">B)</span> Tecnologías digitales y sistemas inteligentes.</div>
+                        <div class="opcion" onclick="seleccionarOpcion(5, 'C', this)"><span class="letra-opcion">C)</span> Motores de combustión convencionales.</div>
+                        <div class="opcion" onclick="seleccionarOpcion(5, 'D', this)"><span class="letra-opcion">D)</span> Equipos mecánicos sin automatización.</div>
+                    </div>
+                    <div class="feedback correcto" id="feedback5">
+                        <strong>¡Correcto!</strong>
+                        La inteligencia artificial, el aprendizaje automático y el IoT permiten operar sistemas energéticos complejos con mayor eficiencia y confiabilidad (Saberi & otros, 2024).
+                    </div>
+                    <div class="btn-container">
+                        <button class="btn" onclick="preguntaAnterior(5, 4)">Anterior</button>
+                        <button class="btn" id="btnFinalizar" onclick="calcularResultado()" disabled>Finalizar</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Pantalla de Resultados -->
+            <div class="resultado-final" id="pantallaResultado">
+                <div class="tarjeta-resultado">
+                    <h2>Resultados</h2>
+                    <div class="porcentaje" id="porcentajeFinal">0%</div>
+                    <div class="mensaje-final" id="mensajeFinal"></div>
+                    <button class="btn btn-reintentar" onclick="reiniciarQuiz()">Reintentar Ejercicio</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Configuración de respuestas correctas
+        const respuestasCorrectas = {
+            1: 'Verdadero',
+            2: 'Verdadero',
+            3: 'C',
+            4: 'C',
+            5: 'B'
+        };
+
+        let respuestasUsuario = {};
+        let preguntasTotales = 5;
+        let preguntaActual = 1;
+
+        // Función para seleccionar una opción
+        function seleccionarOpcion(numPregunta, valor, elemento) {
+            const contenedor = elemento.parentElement;
+            const opciones = contenedor.querySelectorAll('.opcion');
+            
+            // Deshabilitar todas las opciones de esta pregunta
+            opciones.forEach(op => op.classList.add('deshabilitada'));
+            
+            // Marcar la opción seleccionada
+            elemento.classList.add('seleccionada');
+            respuestasUsuario[numPregunta] = valor;
+
+            // Mostrar feedback
+            const feedback = document.getElementById('feedback' + numPregunta);
+            const esCorrecto = valor === respuestasCorrectas[numPregunta];
+
+            if (esCorrecto) {
+                elemento.classList.add('correcta');
+                feedback.classList.add('correcto');
+                feedback.classList.remove('incorrecto');
+                feedback.innerHTML = '<strong>¡Correcto!</strong> ' + obtenerTextoFeedback(numPregunta);
+            } else {
+                elemento.classList.add('incorrecta');
+                feedback.classList.add('incorrecto');
+                feedback.classList.remove('correcto');
+                feedback.innerHTML = '<strong>Incorrecto.</strong> ' + obtenerTextoFeedback(numPregunta);
+                
+                // Resaltar la respuesta correcta
+                opciones.forEach(op => {
+                    if (op.textContent.includes(respuestasCorrectas[numPregunta])) {
+                        op.classList.add('correcta');
+                    }
+                });
+            }
+
+            feedback.classList.add('visible');
+            
+            // Habilitar botón siguiente
+            const btnSiguiente = document.getElementById('btnSiguiente' + numPregunta) || document.getElementById('btnFinalizar');
+            if (btnSiguiente) {
+                btnSiguiente.disabled = false;
+            }
+
+            // Actualizar barra de progreso
+            actualizarProgreso();
+        }
+
+        // Función para obtener el texto de realimentación
+        function obtenerTextoFeedback(numPregunta) {
+            const textos = {
+                1: "Un vector energético, como la electricidad, facilita el transporte y uso de la energía entre diferentes etapas del sistema energético (Orecchini, 2006).",
+                2: "Este tipo de central almacena energía al bombear agua a un embalse superior durante baja demanda y genera electricidad en picos, aunque con pérdidas netas en el balance energético (Ellabban & otros, 2014).",
+                3: "La conversión Gas-to-Liquids (GTL) transforma el gas natural en combustibles líquidos mediante reformado y síntesis, obteniendo como productos diésel sintético de alta calidad (Mokhatab, Poe, & Mak, 2015).",
+                4: "El hidrógeno líquido requiere mantener una temperatura inferior a 20 K para conservar su estado, siendo utilizado principalmente en almacenamiento a gran escala y transporte marítimo (Linares & Moratilla, 2007).",
+                5: "La inteligencia artificial, el aprendizaje automático y el IoT permiten operar sistemas energéticos complejos con mayor eficiencia y confiabilidad (Saberi & otros, 2024)."
+            };
+            return textos[numPregunta];
+        }
+
+        // Función para pasar a la siguiente pregunta
+        function siguientePregunta(actual, siguiente) {
+            document.getElementById('pregunta' + actual).classList.remove('activa');
+            if (siguiente <= preguntasTotales) {
+                document.getElementById('pregunta' + siguiente).classList.add('activa');
+                preguntaActual = siguiente;
+            }
+        }
+
+        // Función para volver a la pregunta anterior
+        function preguntaAnterior(actual, anterior) {
+            document.getElementById('pregunta' + actual).classList.remove('activa');
+            document.getElementById('pregunta' + anterior).classList.add('activa');
+            preguntaActual = anterior;
+        }
+
+        // Función para calcular el resultado final
+        function calcularResultado() {
+            let aciertos = 0;
+            for (let i = 1; i <= preguntasTotales; i++) {
+                if (respuestasUsuario[i] === respuestasCorrectas[i]) {
+                    aciertos++;
+                }
+            }
+
+            let porcentaje = (aciertos / preguntasTotales) * 100;
+            
+            // Ocultar preguntas y mostrar resultados
+            document.getElementById('contenedorPreguntas').style.display = 'none';
+            const resultadoDiv = document.getElementById('pantallaResultado');
+            resultadoDiv.style.display = 'block';
+
+            // Animar contador de porcentaje
+            const porcentajeFinal = document.getElementById('porcentajeFinal');
+            const mensajeFinal = document.getElementById('mensajeFinal');
+            
+            let contador = 0;
+            const intervalo = setInterval(() => {
+                contador += 2;
+                if (contador >= porcentaje) {
+                    contador = porcentaje;
+                    clearInterval(intervalo);
+                }
+                porcentajeFinal.textContent = contador + '%';
+            }, 30);
+
+            // Mensaje según el desempeño
+            if (porcentaje === 100) {
+                mensajeFinal.textContent = "¡Excelente! Dominas completamente el tema.";
+            } else if (porcentaje >= 80) {
+                mensajeFinal.textContent = "¡Muy bien! Tienes un gran conocimiento.";
+            } else if (porcentaje >= 60) {
+                mensajeFinal.textContent = "Buen trabajo, pero hay áreas de mejora.";
+            } else {
+                mensajeFinal.textContent = "Necesitas repasar más los conceptos.";
+            }
+        }
+
+        // Función para reiniciar el cuestionario
+        function reiniciarQuiz() {
+            // Reiniciar variables
+            respuestasUsuario = {};
+            preguntaActual = 1;
+
+            // Reiniciar UI
+            document.getElementById('pantallaResultado').style.display = 'none';
+            document.getElementById('contenedorPreguntas').style.display = 'block';
+            
+            // Ocultar todas las preguntas y mostrar la primera
+            for (let i = 1; i <= preguntasTotales; i++) {
+                document.getElementById('pregunta' + i).classList.remove('activa');
+                const feedback = document.getElementById('feedback' + i);
+                feedback.classList.remove('visible', 'correcto', 'incorrecto');
+                
+                // Restablecer opciones
+                const opciones = document.querySelectorAll('#pregunta' + i + ' .opcion');
+                opciones.forEach(op => {
+                    op.classList.remove('seleccionada', 'correcta', 'incorrecta', 'deshabilitada');
+                });
+            }
+            document.getElementById('pregunta1').classList.add('activa');
+
+            // Deshabilitar botones
+            for (let i = 1; i < preguntasTotales; i++) {
+                document.getElementById('btnSiguiente' + i).disabled = true;
+            }
+            document.getElementById('btnFinalizar').disabled = true;
+
+            // Reiniciar barra de progreso
+            document.getElementById('barraProgreso').style.width = '0%';
+        }
+
+        // Función para actualizar la barra de progreso
+        function actualizarProgreso() {
+            const respondidas = Object.keys(respuestasUsuario).length;
+            const porcentaje = (respondidas / preguntasTotales) * 100;
+            document.getElementById('barraProgreso').style.width = porcentaje + '%';
+        }
+    </script>
+
+</body>
+</html>
