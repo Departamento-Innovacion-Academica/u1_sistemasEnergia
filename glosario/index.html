@@ -9,7 +9,7 @@
         :root {
             --primary: #03223D;
             --secondary: #0A4D7A;
-            --accent: #4A90B8; /* Cian apagado, elegante y sofisticado */
+            --accent: #4A90B8; /* Cian apagado */
             --bg: #F4F8FB;
             --text-main: #1a1a1a;
             --text-muted: #4A5568;
@@ -38,6 +38,31 @@
             overflow-x: hidden;
         }
 
+        /* --- INSTRUCCIÓN SUPERIOR DERECHA --- */
+        .instruction {
+            position: fixed;
+            top: 20px;
+            right: 30px;
+            font-size: 0.75rem;
+            font-weight: 300;
+            color: var(--secondary);
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid var(--glass-border);
+            padding: 8px 16px;
+            border-radius: 20px;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            box-shadow: 0 4px 12px rgba(3, 34, 61, 0.05);
+            z-index: 100;
+            text-align: center;
+            animation: softPulse 3s infinite ease-in-out;
+        }
+
+        @keyframes softPulse {
+            0%, 100% { opacity: 0.85; transform: translateY(0); }
+            50% { opacity: 1; transform: translateY(-2px); }
+        }
+
         /* --- FILTROS --- */
         .filters {
             display: flex;
@@ -45,6 +70,7 @@
             gap: 15px;
             flex-wrap: wrap;
             margin-bottom: 60px;
+            margin-top: 30px; /* Espacio para la instrucción */
         }
 
         .filter-btn {
@@ -206,6 +232,18 @@
             }
         }
 
+        @media (max-width: 900px) {
+            .instruction {
+                position: relative;
+                top: auto;
+                right: auto;
+                margin: 0 auto 20px auto;
+                display: block;
+                width: fit-content;
+            }
+            .filters { margin-top: 0; }
+        }
+
         @media (max-width: 600px) {
             .filters { gap: 10px; }
             .filter-btn { padding: 10px 20px; font-size: 0.75rem; }
@@ -214,6 +252,11 @@
     </style>
 </head>
 <body>
+
+    <!-- Instrucción en la parte superior derecha -->
+    <div class="instruction">
+        (Haga clic sobre cada concepto para ampliar la información.)
+    </div>
 
     <div class="filters">
         <button class="filter-btn active" onclick="filterCards('all', this)">Todos</button>
