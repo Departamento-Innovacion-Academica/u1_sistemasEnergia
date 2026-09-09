@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bibliografía Interactiva - Sistema Energético</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #f4f7f6 0%, #e0e7eb 100%);
+            font-family: 'Segoe UI', Arial, sans-serif;
+            box-sizing: border-box;
+            overflow-x: hidden;
+        }
+
+        .contenedor-flex {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: clamp(20px, 5vw, 60px);
+            box-sizing: border-box;
+        }
+
+        .contenedor-scroll {
+            width: 100%;
+            max-width: 1000px;
+            height: auto;
+            max-height: 90vh;
+            overflow-y: auto;
+            scrollbar-width: thin; 
+            scrollbar-color: #3c6e8f rgba(0,0,0,0.05);
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .contenedor-scroll::-webkit-scrollbar { width: 8px; }
+        .contenedor-scroll::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); border-radius: 10px; }
+        .contenedor-scroll::-webkit-scrollbar-thumb { background: #3c6e8f; border-radius: 10px; }
+
+        /* Encabezado futurista */
+        .header-biblio {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .header-biblio h1 {
+            color: #3c6e8f;
+            font-size: 32px;
+            margin: 0;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 800;
+            text-shadow: 0 4px 15px rgba(60, 110, 143, 0.2);
+        }
+
+        .header-biblio p {
+            color: #5a9e6f;
+            font-size: 16px;
+            margin: 10px 0 0 0;
+            letter-spacing: 1px;
+            font-weight: 500;
+        }
+
+        .header-biblio::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, #3c6e8f, #5a9e6f);
+            margin: 15px auto 0;
+            border-radius: 10px;
+        }
+
+        /* Grid de referencias */
+        .grid-referencias {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 10px;
+        }
+
+        /* Tarjetas estilo futurista */
+        .referencia {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(60, 110, 143, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .referencia::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #3c6e8f, #5a9e6f);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+
+        .referencia:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(60, 110, 143, 0.15);
+            border-color: #3c6e8f;
+        }
+
+        .referencia:hover::before {
+            transform: scaleX(1);
+        }
+
+        .referencia h3 {
+            color: #3c6e8f;
+            font-size: 14px;
+            font-weight: 700;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .referencia p {
+            color: #1a1a1a;
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 0;
+            flex-grow: 1;
+        }
+
+        .referencia .autores {
+            font-weight: 600;
+            color: #2a4d66;
+        }
+
+        .referencia .fecha {
+            display: inline-block;
+            background: #5a9e6f;
+            color: #ffffff;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            width: fit-content;
+        }
+
+        .referencia .fuente {
+            font-size: 13px;
+            color: #6b7a89;
+            font-style: italic;
+        }
+
+        .referencia .enlace {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #3c6e8f;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: auto;
+            transition: all 0.3s ease;
+        }
+
+        .referencia .enlace:hover {
+            color: #5a9e6f;
+            text-decoration: underline;
+        }
+
+        .referencia .enlace svg {
+            width: 14px;
+            height: 14px;
+            transition: transform 0.3s ease;
+        }
+
+        .referencia .enlace:hover svg {
+            transform: translate(2px, -2px);
+        }
+
+        /* Iconos decorativos */
+        .icono-ref {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 30px;
+            height: 30px;
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+        /* Animación de entrada */
+        .animar-biblio {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: apareceTarjeta 0.6s ease forwards;
+        }
+
+        @keyframes apareceTarjeta {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Colores de acento para diferentes categorías */
+        .categoria-renovable { border-left: 4px solid #5a9e6f; }
+        .categoria-nuclear { border-left: 4px solid #f5b041; }
+        .categoria-hidrogeno { border-left: 4px solid #3c6e8f; }
+        .categoria-general { border-left: 4px solid #b0b8c1; }
+
+        @media (max-width: 768px) {
+            .grid-referencias {
+                grid-template-columns: 1fr;
+            }
+            .header-biblio h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="contenedor-flex">
+        <div class="contenedor-scroll">
+            
+            <div class="header-biblio">
+                <h1>Bibliografía</h1>
+                <p>Recursos y Fundamentos del Sistema Energético</p>
+            </div>
+
+            <div class="grid-referencias">
+                <!-- Referencia 1 -->
+                <div class="referencia animar-biblio" style="animation-delay: 0.1s; --categoria: #5a9e6f;">
+                    <div class="icono-ref"><svg fill="#3c6e8f" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg></div>
+                    <h3>Investigación Híbrida</h3>
+                    <p><span class="autores">Adeyinka, A. M., & otros.</span> (2024). Advancements in hybrid energy. <span class="fuente">Sustainable Energy Research, 11(26)</span>.</p>
+                    <span class="fecha">2024</span>
+                    <a href="https://doi.org/10.1186/s40807-024-00120-4" target="_blank" class="enlace">Ver recurso <svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7zM19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7z"/></svg></a>
+                </div>
+
+                <!-- Referencia 2 -->
+                <div class="referencia animar-biblio" style="animation-delay: 0.2s; --categoria: #3c6e8f;">
+                    <div class="icono-ref"><svg fill="#3c6e8f" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg></div>
+                    <h3>Centro Nacional del Hidrógeno</h3>
+                    <p><span class="autores">CNH.</span> (2024). Pilas de combustible. <span class="fuente">Centro Nacional del Hidrógeno</span>.</p>
+                    <span class="fecha">2024</span>
+                    <a href="https://www.cnh2.es/pilas-de-combustible/" target="_blank" class="enlace">Ver recurso <svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7zM19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7z"/></svg></a>
+                </div>
+
+                <!-- Referencia 3 -->
+                <div class="referencia animar-biblio" style="animation-delay: 0.3s; --categoria: #5a9e6f;">
+                    <div class="icono-ref"><svg fill="#3c6e8f" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg></div>
+                    <h3>Energías Renovables</h3>
+                    <p><span class="autores">Ellabban, O., & otros.</span> (2014). Renewable energy resources: Current status, future prospects and their enabling technology. <span class="fuente">Renewable and Sustainable Energy Reviews, 39, 748-764</span>.</p>
+                    <span class="fecha">2014</span>
+                    <a href="https://doi.org/10.1016/j.rser.2014.07.113" target="_blank" class="enlace">Ver recurso <svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7zM19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7z"/></svg></a>
+                </div>
+
+                <!-- Referencia 4 -->
+                <div class="referencia animar-biblio" style="animation-delay: 0.4s; --categoria: #f5b041;">
+                    <div class="icono-ref"><svg fill="#3c6e8f" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg></div>
+                    <h3>Transición Energética</h3>
+                    <p><span class="autores">Energy Transitions Commission.</span> (Julio de 2022). Carbon Capture,Utilisation & Storage in the Energy Transition: Vital but Limited. <span class="fuente">The Making Mission Possible Series, 40-82</span>.</p>
+                    <span class="fecha">2022</span>
+                    <a href="https://www.energy-transitions.org/wp-content/uploads/2022/08/ETC-CCUS-Report-V1.9.pdf" target="_blank" class="enlace">Ver recurso <svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7zM19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7z"/></svg></a>
+                </div>
+
+                <!-- Referencia 5 -->
+                <div class="referencia animar-biblio" style="animation-delay: 0.5s; --categoria: #5a9e6f;">
+                    <div class="icono-ref"><svg fill="#3c6e8f" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg></div>
+                    <h3>Almacenamiento Térmico</h3>
+                    <p><span class="autores">ETDE.</span> (2024). Harnessing Heat: The Future of Thermal Energy Storage Technologies. <span class="fuente">Renewables in Numbers</span>.</p>
+                    <span class="fecha">2024</span>
+                    <a href="https://www.etde.org/2024/10/14/harnessing-heat-the-future-of-thermal-energy-storage-technologies/" target="_blank" class="enlace">Ver recurso <svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7zM19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7z"/></svg></a>
+                </div>
+
+                <!-- Referencia 6 -->
+                <div class="referencia animar-biblio" style="animation-delay: 0.6s; --categoria: #b0b8c1;">
+                    <div class="icono-ref"><svg fill="#3c6e8f" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg></div>
+                    <h3>Sistemas de Energía Eléctrica</h3>
+                    <p><span class="autores">Gómez, E. A., & otros.</span> (2010). Análisis y operación de sistemas de energía eléctrica. <span class="fuente">Universidad de Sevilla</span>.</p>
+                    <span class="fecha">2010</span>
+                    <a href="https://departamento.us.es/ielectrica/wp-content/uploads/2021/08/Analisis-y-operacion-de-SEE_2010.pdf" target="_blank" class="enlace">Ver recurso <svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7zM19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7z"/></svg></a>
+                </div>
+
+                <!-- Referencia 7 -->
+                <div class="referencia animar-biblio" style="animation-delay: 0.7s; --categoria: #3c6e8f;">
+                    <div class="icono-ref"><svg fill="#3c6e8f" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg></div>
+                    <h3>IA y Redes Inteligentes</h3>
+                    <p><span class="autores">Hashim, S.</span> (2024). The Role of Artificial Intelligence in Modern Smart Grids. <span class="fuente">Emission Index</span>.</p>
+                    <span class="fecha">2024</span>
+                    <a href="https://www.emission-index.com/energy-transition/ai-smart-grids" target="_blank" class="enlace">Ver recurso <svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7zM19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7z"/></svg></a>
+                </div>
+
+                <!-- Referencia 8 -->
+                <div class="referencia animar-biblio" style="animation-delay: 0.8s; --categoria: #f5b041;">
+                    <div class="icono-ref"><svg fill="#3c6e8f" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg></div>
+                    <h3>Residuos Radiactivos</h3>
+                    <p><span class="autores">IAEA.</span> (2009). Classification of Radioactive Waste: Safety Guide. <span class="fuente">IAEA Safety Standards Series, No. GSG-1(STI/PUB/1419)</span>.</p>
+                    <span class="fecha">2009</span>
+                    <a href="https://www-pub.iaea.org/MTCD/Publications/PDF/Pub1419_web.pdf" target="_blank" class="enlace">Ver recurso <svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7zM19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7z"/></svg></a>
+                </div>
+
+                <!-- Referencia 9 -->
+                <div class="referencia animar-biblio" style="animation-delay: 0.9s; --categoria: #f5b041;">
+                    <div class="icono-ref"><svg fill="#3c6e8f" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg></div>
+                    <h3>Gestión de Residuos</h3>
+                    <p><span class="autores">IAEA.</span> (2009). Policies and Strategies for Radioactive Waste Management. <span class="fuente">IAEA Nuclear Energy Series No. NW-G-1.1(STI/PUB/1396)</span>.</p>
+                    <span class="fecha">2009</span>
+                    <a href="https://www-pub.iaea.org/MTCD/Publications/PDF/Pub1396_web.pdf" target="_blank" class="enlace">Ver recurso <svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7zM19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7z"/></svg></a>
+                </div>
+
+                <!-- Referencia 10 -->
+                <div class="referencia animar-biblio" style="animation-delay: 1.0s; --categoria: #f5b041;">
+                    <div class="icono-ref"><svg fill="#3c6e8f" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg></div>
+                    <h3>Seguridad Nuclear</h3>
+                    <p><span class="autores">International Atomic Energy Agency.</span> (2016). Safety of Nuclear Power Plants: Design. <span class="fuente">IAEA Safety Standards Series No. SSR-2/1 (Rev. 1)</span>.</p>
+                    <span class="fecha">2016</span>
+                    <a href="https://www-pub.iaea.org/MTCD/Publications/PDF/Pub1715web-46541668.pdf" target="_blank" class="enlace">Ver recurso <svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7zM19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 
