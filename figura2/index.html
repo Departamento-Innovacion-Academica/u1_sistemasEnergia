@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagrama de Aerogenerador - Animado y Escalable</title>
+    <style>
+        /* Reset básico y fondo */
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #f4f7f6; /* Fondo suave */
+            font-family: 'Segoe UI', Arial, sans-serif;
+            box-sizing: border-box;
+        }
+
+        /* Contenedor con margen de aire inteligente */
+        .contenedor-svg {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            
+            /* Margen adaptable: mínimo 20px, preferente 5% del viewport, máximo 80px */
+            padding: clamp(20px, 5vw, 80px);
+            box-sizing: border-box;
+        }
+
+        /* El SVG se adapta al 100% del espacio disponible */
+        svg {
+            width: 100%;
+            height: 100%;
+            max-width: 900px;  /* Límite para que no se vea gigante en monitores grandes */
+            max-height: 800px;
+            background-color: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            preserveAspectRatio="xMidYMid meet"; 
+        }
+
+        /* Estilos del dibujo y animaciones */
+        .text-main { font-family: Arial, sans-serif; font-size: 13px; fill: #1a1a1a; text-anchor: middle; dominant-baseline: middle; }
+        .text-side { font-family: Arial, sans-serif; font-size: 12px; fill: #1a1a1a; text-anchor: middle; dominant-baseline: middle; transform: rotate(-90deg); }
+        .text-label { font-family: Arial, sans-serif; font-size: 12px; fill: #1a1a1a; text-anchor: start; dominant-baseline: middle; }
+        
+        .box-white { fill: #ffffff; stroke: #333333; stroke-width: 1.5; }
+        .box-dashed { fill: none; stroke: #333333; stroke-width: 1.5; stroke-dasharray: 4, 3; }
+        .line-solid { stroke: #333333; stroke-width: 1.5; fill: none; }
+        .line-hatch { stroke: #333333; stroke-width: 1; fill: none; }
+        
+        /* Animación de aparición */
+        .animar { opacity: 0; }
+    </style>
+</head>
+<body>
+
+    <div class="contenedor-svg">
+        <!-- ViewBox ligeramente expandido para dar aire interno -->
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 480 440" preserveAspectRatio="xMidYMid meet">
+          
+          <!-- ================= ESTRUCTURA PRINCIPAL (Aparece primero) ================= -->
+          <g class="animar">
+            <animate attributeName="opacity" from="0" to="1" dur="0.6s" begin="0.2s" fill="freeze" />
+            
+            <!-- Rotor -->
+            <rect x="85" y="35" width="15" height="190" class="box-white" />
+            <text x="92" y="130" class="text-side" transform="rotate(-90 92.5 130)">Rotor</text>
+
+            <!-- Hub -->
+            <rect x="100" y="115" width="35" height="35" class="box-white" />
+            <text x="117.5" y="132.5" class="text-main">Hub</text>
+
+            <!-- Torre -->
+            <rect x="230" y="165" width="20" height="165" class="box-white" />
+            <text x="240" y="247.5" class="text-side" transform="rotate(-90 240 247.5)">Tower</text>
+
+            <!-- Base y suelo -->
+            <rect x="190" y="355" width="100" height="60" class="box-white" />
+            <text x="240" y="385" class="text-main">Foundation</text>
+            <line x1="115" y1="355" x2="365" y2="355" class="line-solid" />
+            
+            <!-- Sombras del suelo (Hatching) -->
+            <g class="line-hatch">
+                <line x1="120" y1="355" x2="110" y2="365" /><line x1="130" y1="355" x2="120" y2="365" />
+                <line x1="140" y1="355" x2="130" y2="365" /><line x1="150" y1="355" x2="140" y2="365" />
+                <line x1="160" y1="355" x2="150" y2="365" /><line x1="170" y1="355" x2="160" y2="365" />
+                <line x1="180" y1="355" x2="170" y2="365" /><line x1="190" y1="355" x2="180" y2="365" />
+                <line x1="200" y1="355" x2="190" y2="365" /><line x1="210" y1="355" x2="200" y2="365" />
+                <line x1="220" y1="355" x2="210" y2="365" /><line x1="230" y1="355" x2="220" y2="365" />
+                <line x1="240" y1="355" x2="230" y2="365" /><line x1="250" y1="355" x2="240" y2="365" />
+                <line x1="260" y1="355" x2="250" y2="365" /><line x1="270" y1="355" x2="260" y2="365" />
+                <line x1="280" y1="355" x2="270" y2="365" /><line x1="290" y1="355" x2="280" y2="365" />
+                <line x1="300" y1="355" x2="290" y2="365" /><line x1="310" y1="355" x2="300" y2="365" />
+                <line x1="320" y1="355" x2="310" y2="365" /><line x1="330" y1="355" x2="320" y2="365" />
+                <line x1="340" y1="355" x2="330" y2="365" /><line x1="350" y1="355" x2="340" y2="365" />
+                <line x1="360" y1="355" x2="350" y2="365" />
+            </g>
+
+            <!-- Casita (Balance of electrical system) -->
+            <rect x="320" y="320" width="35" height="35" class="box-white" />
+            <polygon points="315,320 337.5,300 360,320" class="box-white" />
+          </g>
+
+          <!-- ================= GONDOLA Y CAJAS INTERNAS (Aparece segundo) ================= -->
+          <g class="animar">
+            <animate attributeName="opacity" from="0" to="1" dur="0.6s" begin="0.8s" fill="freeze" />
+            
+            <!-- Nacelle cover -->
+            <rect x="140" y="65" width="200" height="85" class="box-dashed" />
+            
+            <!-- Control -->
+            <rect x="195" y="80" width="85" height="25" class="box-white" />
+            <text x="237.5" y="92.5" class="text-main">Control</text>
+
+            <!-- Drive train -->
+            <rect x="150" y="115" width="75" height="22" class="box-white" />
+            <text x="187.5" y="126" class="text-main">Drive train</text>
+
+            <!-- Generator -->
+            <rect x="235" y="115" width="75" height="22" class="box-white" />
+            <text x="272.5" y="126" class="text-main">Generator</text>
+
+            <!-- Main frame/yaw system -->
+            <rect x="140" y="145" width="200" height="20" class="box-white" />
+            <text x="240" y="155" class="text-main">Main frame/yaw system</text>
+          </g>
+
+          <!-- ================= ETIQUETAS Y FLECHAS (Aparece al final) ================= -->
+          <g class="animar">
+            <animate attributeName="opacity" from="0" to="1" dur="0.6s" begin="1.4s" fill="freeze" />
+            
+            <!-- Nacelle cover -->
+            <text x="290" y="30" class="text-label">Nacelle cover</text>
+            <line x1="290" y1="35" x2="275" y2="70" class="line-solid" />
+            <polygon points="275,70 277,60 283,65" fill="#333333" />
+
+            <!-- Balance of electrical system -->
+            <text x="315" y="285" class="text-label">Balance of</text>
+            <text x="315" y="300" class="text-label">electrical system</text>
+            <line x1="315" y1="305" x2="330" y2="318" class="line-solid" />
+            <polygon points="330,318 320,316 328,308" fill="#333333" />
+          </g>
+
+        </svg>
+    </div>
+
+</body>
+</html>

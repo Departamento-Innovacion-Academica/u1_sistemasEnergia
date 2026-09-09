@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ciclo del Combustible Nuclear - Flecha al Borde Derecho</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #f4f7f6;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            box-sizing: border-box;
+        }
+
+        .contenedor-svg {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: clamp(20px, 5vw, 80px);
+            box-sizing: border-box;
+        }
+
+        svg {
+            width: 100%;
+            height: 100%;
+            max-width: 1400px;
+            max-height: 800px;
+            background-color: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            preserveAspectRatio="xMidYMid meet"; 
+        }
+
+        .box { fill: #ffffff; stroke: #000000; stroke-width: 2; rx: 2; ry: 2; }
+        .flow-line { stroke: #000000; stroke-width: 2; fill: none; }
+        .arrow-head { fill: #000000; }
+        
+        .text-box { font-family: Arial, sans-serif; font-size: 15px; fill: #000000; text-anchor: middle; dominant-baseline: middle; }
+        .text-label { font-family: Arial, sans-serif; font-size: 14px; fill: #000000; text-anchor: middle; dominant-baseline: middle; }
+
+        .animar { opacity: 0; }
+    </style>
+</head>
+<body>
+
+    <div class="contenedor-svg">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="-20 -20 1100 300" preserveAspectRatio="xMidYMid meet">
+          
+          <!-- ================= NIVEL 1: CAJAS PRINCIPALES ================= -->
+          <g class="animar">
+            <animate attributeName="opacity" from="0" to="1" dur="0.6s" begin="0.2s" fill="freeze" />
+            
+            <!-- Fila Superior -->
+            <rect x="10" y="10" width="110" height="65" class="box" />
+            <text x="65" y="30" class="text-box">Uranium</text>
+            <text x="65" y="47" class="text-box">mining and</text>
+            <text x="65" y="64" class="text-box">milling</text>
+
+            <rect x="250" y="10" width="90" height="65" class="box" />
+            <text x="295" y="30" class="text-box">Conversion</text>
+            <text x="295" y="47" class="text-box">to</text>
+            <text x="295" y="64" class="text-box">UF₆</text>
+
+            <rect x="500" y="10" width="110" height="65" class="box" />
+            <text x="555" y="47" class="text-box">Enrichment</text>
+
+            <rect x="750" y="10" width="110" height="65" class="box" />
+            <text x="805" y="30" class="text-box">Fuel</text>
+            <text x="805" y="47" class="text-box">fabrication</text>
+
+            <!-- Fila Inferior -->
+            <rect x="10" y="210" width="110" height="65" class="box" />
+            <text x="65" y="230" class="text-box">Waste</text>
+            <text x="65" y="247" class="text-box">disposal</text>
+
+            <rect x="250" y="210" width="110" height="65" class="box" />
+            <text x="305" y="230" class="text-box">Spent</text>
+            <text x="305" y="247" class="text-box">fuel</text>
+            <text x="305" y="264" class="text-box">storage</text>
+
+            <rect x="500" y="210" width="110" height="65" class="box" />
+            <text x="555" y="247" class="text-box">Reactor</text>
+          </g>
+
+          <!-- ================= NIVEL 2: CONEXIONES Y ETIQUETAS ================= -->
+          <g class="animar">
+            <animate attributeName="opacity" from="0" to="1" dur="0.5s" begin="0.8s" fill="freeze" />
+            
+            <!-- Flechas Superiores -->
+            <!-- Uranium -> Conversion -->
+            <line x1="120" y1="42" x2="245" y2="42" class="flow-line" />
+            <polygon points="245,42 235,37 235,47" class="arrow-head" />
+            <text x="182" y="20" class="text-label">U₃O₈</text>
+            <text x="182" y="60" class="text-label">150,047 U</text>
+
+            <!-- Conversion -> Enrichment -->
+            <line x1="340" y1="42" x2="495" y2="42" class="flow-line" />
+            <polygon points="495,42 485,37 485,47" class="arrow-head" />
+            <text x="417" y="20" class="text-label">UF₆</text>
+            <text x="417" y="60" class="text-label">149,297 U</text>
+
+            <!-- Enrichment -> Fuel fabrication -->
+            <line x1="610" y1="42" x2="745" y2="42" class="flow-line" />
+            <polygon points="745,42 735,37 735,47" class="arrow-head" />
+            <text x="677" y="15" class="text-label">~ 3 w/o UF₆</text>
+            <text x="677" y="55" class="text-label">821 ²³⁵U</text>
+            <text x="677" y="75" class="text-label">27,249 THM</text>
+
+            <!-- Flechas Verticales -->
+            <!-- Conversion Loss -->
+            <line x1="295" y1="75" x2="295" y2="130" class="flow-line" />
+            <polygon points="295,130 290,120 300,120" class="arrow-head" />
+            <text x="295" y="155" class="text-label">Loss 750 U</text>
+
+            <!-- Enrichment Tails -->
+            <line x1="555" y1="75" x2="555" y2="130" class="flow-line" />
+            <polygon points="555,130 550,120 560,120" class="arrow-head" />
+            <text x="555" y="155" class="text-label">0.2 w/o tails</text>
+
+            <!-- Fuel fabrication Loss -->
+            <line x1="805" y1="75" x2="805" y2="130" class="flow-line" />
+            <polygon points="805,130 800,120 810,120" class="arrow-head" />
+            <text x="805" y="155" class="text-label">Loss 8 ²³⁵U</text>
+            <text x="805" y="175" class="text-label">272 THM</text>
+
+            <!-- Bucle Derecho: Fuel Fabrication -> Reactor -->
+            <!-- La línea baja y conecta EXACTAMENTE al borde DERECHO del Reactor (x=610, ya que la caja va de 500 a 610) -->
+            <path d="M 860 42 L 1000 42 L 1000 242 L 615 242" class="flow-line" />
+            <polygon points="615,242 625,237 625,247" class="arrow-head" />
+            <text x="790" y="215" class="text-label">UO₂ fuel assemblies</text>
+            <!-- BOC debajo de la línea -->
+            <text x="790" y="260" class="text-label">BOC</text>
+
+            <!-- Flechas Inferiores -->
+            <!-- Reactor -> Spent fuel storage (La línea sale del borde IZQUIERDO x=500) -->
+            <line x1="500" y1="242" x2="365" y2="242" class="flow-line" />
+            <polygon points="365,242 375,237 375,247" class="arrow-head" />
+            <text x="430" y="215" class="text-label">Spent fuel</text>
+            <text x="430" y="235" class="text-label">assemblies</text>
+            <text x="430" y="255" class="text-label">EOC</text>
+
+            <!-- Spent fuel storage -> Waste disposal -->
+            <line x1="250" y1="242" x2="125" y2="242" class="flow-line" />
+            <polygon points="125,242 135,237 135,247" class="arrow-head" />
+            <text x="190" y="215" class="text-label">Decayed</text>
+            <text x="190" y="235" class="text-label">fuel</text>
+          </g>
+
+        </svg>
+    </div>
+
+</body>
+</html>

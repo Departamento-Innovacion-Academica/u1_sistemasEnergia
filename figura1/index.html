@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recursos Energéticos - Diagrama Escalable con Aire</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden; /* Evita scrollbars */
+            background-color: #f4f7f6; /* Color de fondo externo */
+            font-family: 'Segoe UI', Arial, sans-serif;
+            box-sizing: border-box;
+        }
+
+        .contenedor-svg {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            
+            /* PADDING INTELIGENTE: 
+               - Mínimo 20px en pantallas pequeñas
+               - Preferible 5% del ancho en pantallas medianas
+               - Máximo 80px en pantallas muy grandes */
+            padding: clamp(20px, 5vw, 80px);
+            box-sizing: border-box;
+        }
+
+        /* El SVG se adapta al 100% del espacio disponible (respetando el padding) */
+        svg {
+            width: 100%;
+            height: 100%;
+            max-width: 1400px; /* Limite máximo para que no se vea exagerado en monitores 4K */
+            max-height: 1000px;
+            background-color: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            preserveAspectRatio="xMidYMid meet"; 
+        }
+    </style>
+</head>
+<body>
+
+    <div class="contenedor-svg">
+        <!-- Se ha cambiado el viewBox a "-10 -10 720 650" para crear un margen interno de 10px alrededor de todo el diagrama -->
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 720 650" preserveAspectRatio="xMidYMid meet">
+          <defs>
+            <style>
+              .box-shadow { filter: drop-shadow(0px 3px 3px rgba(0,0,0,0.15)); }
+              .title-text { font-family: 'Segoe UI', Arial, sans-serif; font-size: 16px; font-weight: bold; fill: #1a1a1a; text-anchor: middle; dominant-baseline: middle; }
+              .node-text { font-family: 'Segoe UI', Arial, sans-serif; font-size: 15px; fill: #1a1a1a; text-anchor: middle; dominant-baseline: middle; }
+              .leaf-text { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; fill: #1a1a1a; text-anchor: middle; dominant-baseline: middle; }
+              
+              .animar { opacity: 0; }
+            </style>
+          </defs>
+
+          <!-- CONEXIONES Nivel 1: Raíz -->
+          <g class="animar">
+            <animate attributeName="opacity" from="0" to="1" dur="0.6s" begin="0.2s" fill="freeze" />
+            <animateTransform attributeName="transform" type="translate" from="0 15" to="0 0" dur="0.6s" begin="0.2s" fill="freeze" />
+            
+            <g class="box-shadow">
+              <rect x="200" y="14" width="300" height="70" rx="12" ry="12" fill="#c5dcf2" stroke="#7fa7d1" stroke-width="2" />
+              <text x="350" y="40" class="title-text">Recursos energéticos más usados</text>
+              <text x="350" y="62" class="title-text">en el mundo</text>
+            </g>
+          </g>
+
+          <!-- Nivel 2: Ramas y flechas -->
+          <g class="animar">
+            <animate attributeName="opacity" from="0" to="1" dur="0.4s" begin="0.7s" fill="freeze" />
+            <polygon points="180,136 172,116 188,116" fill="#3d3d3d" />
+            <polygon points="520,136 512,116 528,116" fill="#3d3d3d" />
+          </g>
+
+          <g class="animar">
+            <animate attributeName="opacity" from="0" to="1" dur="0.4s" begin="0.7s" fill="freeze" />
+            <path d="M 350 84 L 350 112 L 180 112 L 180 136" stroke="#3d3d3d" stroke-width="2.5" fill="none" />
+            <path d="M 180 198 L 180 232 L 140 232 L 140 254" stroke="#3d3d3d" stroke-width="2" fill="none" />
+            <line x1="140" y1="264" x2="180" y2="264" stroke="#3d3d3d" stroke-width="2" />
+            <path d="M 140 264 L 140 322 L 140 344" stroke="#3d3d3d" stroke-width="2" fill="none" />
+            <line x1="140" y1="354" x2="180" y2="354" stroke="#3d3d3d" stroke-width="2" />
+            <path d="M 140 354 L 140 412 L 140 434" stroke="#3d3d3d" stroke-width="2" fill="none" />
+          </g>
+
+          <g class="animar">
+            <animate attributeName="opacity" from="0" to="1" dur="0.4s" begin="0.7s" fill="freeze" />
+            <path d="M 350 84 L 350 112 L 520 112 L 520 136" stroke="#3d3d3d" stroke-width="2.5" fill="none" />
+            <path d="M 520 198 L 520 232 L 480 232 L 480 254" stroke="#3d3d3d" stroke-width="2" fill="none" />
+            <line x1="480" y1="264" x2="520" y2="264" stroke="#3d3d3d" stroke-width="2" />
+            <path d="M 480 264 L 480 322 L 480 344" stroke="#3d3d3d" stroke-width="2" fill="none" />
+            <line x1="480" y1="354" x2="520" y2="354" stroke="#3d3d3d" stroke-width="2" />
+            <path d="M 480 354 L 480 412 L 480 434" stroke="#3d3d3d" stroke-width="2" fill="none" />
+            <line x1="480" y1="444" x2="520" y2="444" stroke="#3d3d3d" stroke-width="2" />
+            <path d="M 480 444 L 480 502 L 480 524" stroke="#3d3d3d" stroke-width="2" fill="none" />
+            <line x1="480" y1="534" x2="520" y2="534" stroke="#3d3d3d" stroke-width="2" />
+            <path d="M 480 534 L 480 592" stroke="#3d3d3d" stroke-width="2" fill="none" />
+          </g>
+
+          <!-- Nivel 2: Categorías -->
+          <g class="animar">
+            <animate attributeName="opacity" from="0" to="1" dur="0.5s" begin="0.9s" fill="freeze" />
+            <animateTransform attributeName="transform" type="translate" from="0 15" to="0 0" dur="0.5s" begin="0.9s" fill="freeze" />
+            
+            <g class="box-shadow">
+              <rect x="70" y="136" width="220" height="62" rx="12" ry="12" fill="#c8e6c9" stroke="#81c784" stroke-width="2" />
+              <text x="180" y="163" class="node-text" style="font-weight: bold;">Energías no renovables</text>
+            </g>
+            <g class="box-shadow">
+              <rect x="410" y="136" width="220" height="62" rx="12" ry="12" fill="#c8e6c9" stroke="#81c784" stroke-width="2" />
+              <text x="520" y="163" class="node-text" style="font-weight: bold;">Energías renovables</text>
+            </g>
+          </g>
+
+          <!-- Nivel 3: Hojas (Izquierda) -->
+          <g class="animar">
+            <animate attributeName="opacity" from="0" to="1" dur="0.5s" begin="1.3s" fill="freeze" />
+            <animateTransform attributeName="transform" type="translate" from="0 15" to="0 0" dur="0.5s" begin="1.3s" fill="freeze" />
+            <g class="box-shadow">
+              <rect x="140" y="254" width="180" height="38" rx="8" ry="8" fill="#fde0b2" stroke="#f5b041" stroke-width="2" />
+              <text x="230" y="273" class="leaf-text">Carbón</text>
+            </g>
+          </g>
+          <g class="animar">
+            <animate attributeName="opacity" from="0" to="1" dur="0.5s" begin="1.5s" fill="freeze" />
+            <animateTransform attributeName="transform" type="translate" from="0 15" to="0 0" dur="0.5s" begin="1.5s" fill="freeze" />
+            <g class="box-shadow">
+              <rect x="140" y="344" width="180" height="38" rx="8" ry="8" fill="#fde0b2" stroke="#f5b041" stroke-width="2" />
+              <text x="230" y="363" class="leaf-text">Petróleo</text>
+            </g>
+          </g>
+          <g class="animar">
+            <animate attributeName="opacity" from="0" to="1" dur="0.5s" begin="1.7s" fill="freeze" />
+            <animateTransform attributeName="transform" type="translate" from="0 15" to="0 0" dur="0.5s" begin="1.7s" fill="freeze" />
+            <g class="box-shadow">
+              <rect x="140" y="434" width="180" height="38" rx="8" ry="8" fill="#fde0b2" stroke="#f5b041" stroke-width="2" />
+              <text x="230" y="453" class="leaf-text">Gas</text>
+            </g>
+          </g>
+
+          <!-- Nivel 3: Hojas (Derecha) -->
+          <g class="animar">
+            <animate attributeName="opacity" from="0" to="1" dur="0.5s" begin="1.3s" fill="freeze" />
+            <animateTransform attributeName="transform" type="translate" from="0 15" to="0 0" dur="0.5s" begin="1.3s" fill="freeze" />
+            <g class="box-shadow">
+              <rect x="480" y="254" width="180" height="38" rx="8" ry="8" fill="#fde0b2" stroke="#f5b041" stroke-width="2" />
+              <text x="570" y="273" class="leaf-text">Hidroelectricidad</text>
+            </g>
+          </g>
+          <g class="animar">
+            <animate attributeName="opacity" from="0" to="1" dur="0.5s" begin="1.5s" fill="freeze" />
+            <animateTransform attributeName="transform" type="translate" from="0 15" to="0 0" dur="0.5s" begin="1.5s" fill="freeze" />
+            <g class="box-shadow">
+              <rect x="480" y="344" width="180" height="38" rx="8" ry="8" fill="#fde0b2" stroke="#f5b041" stroke-width="2" />
+              <text x="570" y="363" class="leaf-text">Biomasa Tradicional</text>
+            </g>
+          </g>
+          <g class="animar">
+            <animate attributeName="opacity" from="0" to="1" dur="0.5s" begin="1.7s" fill="freeze" />
+            <animateTransform attributeName="transform" type="translate" from="0 15" to="0 0" dur="0.5s" begin="1.7s" fill="freeze" />
+            <g class="box-shadow">
+              <rect x="480" y="434" width="180" height="38" rx="8" ry="8" fill="#fde0b2" stroke="#f5b041" stroke-width="2" />
+              <text x="570" y="453" class="leaf-text">Eólica</text>
+            </g>
+          </g>
+          <g class="animar">
+            <animate attributeName="opacity" from="0" to="1" dur="0.5s" begin="1.9s" fill="freeze" />
+            <animateTransform attributeName="transform" type="translate" from="0 15" to="0 0" dur="0.5s" begin="1.9s" fill="freeze" />
+            <g class="box-shadow">
+              <rect x="480" y="524" width="180" height="38" rx="8" ry="8" fill="#fde0b2" stroke="#f5b041" stroke-width="2" />
+              <text x="570" y="543" class="leaf-text">Geotérmica</text>
+            </g>
+          </g>
+          <g class="animar">
+            <animate attributeName="opacity" from="0" to="1" dur="0.5s" begin="2.1s" fill="freeze" />
+            <animateTransform attributeName="transform" type="translate" from="0 15" to="0 0" dur="0.5s" begin="2.1s" fill="freeze" />
+            <g class="box-shadow">
+              <rect x="480" y="592" width="180" height="38" rx="8" ry="8" fill="#fde0b2" stroke="#f5b041" stroke-width="2" />
+              <text x="570" y="611" class="leaf-text">Solar</text>
+            </g>
+          </g>
+        </svg>
+    </div>
+
+</body>
+</html>
