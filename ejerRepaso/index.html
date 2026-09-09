@@ -10,7 +10,7 @@
             padding: 0;
             width: 100%;
             height: 100%;
-            background-color: #f4f7f6;
+            background-color: #f4f7f6; /* Fondo general */
             font-family: 'Segoe UI', Arial, sans-serif;
             box-sizing: border-box;
             overflow-x: hidden;
@@ -32,17 +32,18 @@
             height: auto;
             max-height: 90vh;
             overflow-y: auto;
-            background-color: #ffffff;
-            border-radius: 20px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+            /* Se eliminó el fondo blanco y la sombra */
+            background-color: transparent; 
+            border-radius: 0;
+            box-shadow: none;
             scrollbar-width: thin; 
             scrollbar-color: #b0b8c1 #f0f0f0;
-            padding: 40px;
+            padding: 20px;
             box-sizing: border-box;
         }
 
         .contenedor-scroll::-webkit-scrollbar { width: 10px; }
-        .contenedor-scroll::-webkit-scrollbar-track { background: #f0f0f0; border-radius: 10px; }
+        .contenedor-scroll::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); border-radius: 10px; }
         .contenedor-scroll::-webkit-scrollbar-thumb { background: #b0b8c1; border-radius: 10px; }
 
         /* Estilos de encabezado */
@@ -50,7 +51,7 @@
             text-align: center;
             margin-bottom: 30px;
             padding-bottom: 20px;
-            border-bottom: 2px solid #e0e7eb;
+            border-bottom: 2px solid #d3dde3;
         }
         .header-quiz h1 {
             color: #3c6e8f;
@@ -58,7 +59,7 @@
             margin: 0 0 10px 0;
         }
         .header-quiz p {
-            color: #6b7a89;
+            color: #4a5a6a;
             font-size: 15px;
             font-style: italic;
             margin: 0;
@@ -68,7 +69,7 @@
         .barra-progreso {
             width: 100%;
             height: 8px;
-            background-color: #e0e7eb;
+            background-color: #d3dde3;
             border-radius: 10px;
             margin-bottom: 30px;
             overflow: hidden;
@@ -112,7 +113,7 @@
         }
 
         .opcion {
-            background-color: #f8fafb;
+            background-color: #ffffff; /* Las opciones mantienen su propio fondo blanco */
             border: 2px solid #e0e7eb;
             border-radius: 12px;
             padding: 15px 20px;
@@ -245,7 +246,7 @@
 
         .mensaje-final {
             font-size: 18px;
-            color: #6b7a89;
+            color: #4a5a6a;
             margin-bottom: 30px;
         }
 
@@ -258,12 +259,12 @@
             background-color: #e09b2d;
         }
 
-        /* Tarjeta de resultados */
+        /* Tarjeta de resultados (ahora con fondo semitransparente para destacar sin romper el estilo) */
         .tarjeta-resultado {
-            background-color: #f2f7f9;
+            background-color: rgba(255, 255, 255, 0.7);
             border-radius: 15px;
             padding: 30px;
-            box-shadow: inset 0 0 0 2px #e0e7eb;
+            box-shadow: inset 0 0 0 2px #d3dde3;
         }
     </style>
 </head>
