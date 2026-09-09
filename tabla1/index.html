@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tabla Comparativa - Animación Fluida</title>
+    <title>Tabla de Celdas de Combustible - Cuadrícula Completa</title>
     <style>
         body, html {
             margin: 0;
@@ -22,250 +22,294 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: clamp(20px, 5vw, 80px);
+            padding: clamp(30px, 6vw, 100px);
             box-sizing: border-box;
         }
 
         svg {
             width: 100%;
             height: 100%;
-            max-width: 1300px;
-            max-height: 850px;
+            max-width: 1400px;
+            max-height: 1000px;
             background-color: #ffffff;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+            viewBox: -50 -30 1100 900;
             preserveAspectRatio="xMidYMid meet"; 
         }
 
-        /* Estilos de la tabla */
         .header-bg { fill: #3c6e8f; }
-        .header-text { font-family: 'Segoe UI', Arial, sans-serif; font-size: 16px; font-weight: bold; fill: #ffffff; text-anchor: middle; dominant-baseline: middle; }
+        .header-text { font-family: 'Segoe UI', Arial, sans-serif; font-size: 17px; font-weight: bold; fill: #ffffff; text-anchor: middle; dominant-baseline: middle; }
         
-        .label-bg { fill: #ffffff; }
-        .label-text { font-family: 'Segoe UI', Arial, sans-serif; font-size: 15px; font-weight: bold; fill: #1a1a1a; text-anchor: start; dominant-baseline: middle; }
+        .label-bg { fill: #f2f7f9; }
+        .label-text { font-family: 'Segoe UI', Arial, sans-serif; font-size: 16px; font-weight: bold; fill: #1a1a1a; text-anchor: start; dominant-baseline: middle; }
         
         .cell-bg { fill: #ffffff; }
         .cell-text { font-family: 'Segoe UI', Arial, sans-serif; font-size: 15px; fill: #1a1a1a; text-anchor: middle; dominant-baseline: middle; }
 
-        .grid-line { stroke: #e0e6eb; stroke-width: 1.5; fill: none; }
+        .grid-line { stroke: #d3dde3; stroke-width: 1.5; fill: none; }
 
-        /* Animaciones mejoradas */
-        .animar-fila { opacity: 0; }
+        .animar-fila { opacity: 0; transform: translateY(20px); }
     </style>
 </head>
 <body>
 
     <div class="contenedor-svg">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 700" preserveAspectRatio="xMidYMid meet">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="-50 -30 1100 900" preserveAspectRatio="xMidYMid meet">
           
-          <!-- Definición de columnas: 200px etiquetas, 133px por celda técnica -->
-          <!-- Alturas de filas: 60, 140, 100, 100, 220, 100 -->
-
-          <!-- ================= FILA 1: ENCABEZADOS (Aparece primero) ================= -->
+          <!-- ================= FILA 1: ENCABEZADOS ================= -->
           <g class="animar-fila">
-            <animate attributeName="opacity" from="0" to="1" dur="0.8s" begin="0.2s" fill="freeze" />
-            <animateTransform attributeName="transform" type="translate" from="0 -30" to="0 0" dur="0.8s" begin="0.2s" fill="freeze" />
+            <animate attributeName="opacity" from="0" to="1" dur="0.6s" begin="0.2s" fill="freeze" />
+            <animateTransform attributeName="transform" type="translate" from="0 20" to="0 0" dur="0.6s" begin="0.2s" fill="freeze" />
             
             <rect x="0" y="0" width="200" height="60" class="header-bg" />
-            <rect x="200" y="0" width="133" height="60" class="header-bg" />
-            <rect x="333" y="0" width="133" height="60" class="header-bg" />
-            <rect x="466" y="0" width="134" height="60" class="header-bg" />
-            <rect x="600" y="0" width="133" height="60" class="header-bg" />
-            <rect x="733" y="0" width="133" height="60" class="header-bg" />
-            <rect x="866" y="0" width="134" height="60" class="header-bg" />
+            <rect x="200" y="0" width="130" height="60" class="header-bg" />
+            <rect x="330" y="0" width="130" height="60" class="header-bg" />
+            <rect x="460" y="0" width="140" height="60" class="header-bg" />
+            <rect x="600" y="0" width="130" height="60" class="header-bg" />
+            <rect x="730" y="0" width="130" height="60" class="header-bg" />
+            <rect x="860" y="0" width="140" height="60" class="header-bg" />
 
-            <text x="266.5" y="30" class="header-text">AFC</text>
-            <text x="399.5" y="30" class="header-text">PEMFC</text>
-            <text x="533" y="30" class="header-text">PAFC</text>
-            <text x="666.5" y="30" class="header-text">MCFC</text>
-            <text x="799.5" y="30" class="header-text">SOFC</text>
-            <text x="933" y="30" class="header-text">DMFC</text>
+            <text x="265" y="30" class="header-text">AFC</text>
+            <text x="395" y="30" class="header-text">PEMFC</text>
+            <text x="530" y="30" class="header-text">PAFC</text>
+            <text x="665" y="30" class="header-text">MCFC</text>
+            <text x="795" y="30" class="header-text">SOFC</text>
+            <text x="930" y="30" class="header-text">DMFC</text>
+
+            <!-- Líneas de división verticales en el encabezado -->
+            <line x1="200" y1="0" x2="200" y2="60" class="grid-line" />
+            <line x1="330" y1="0" x2="330" y2="60" class="grid-line" />
+            <line x1="460" y1="0" x2="460" y2="60" class="grid-line" />
+            <line x1="600" y1="0" x2="600" y2="60" class="grid-line" />
+            <line x1="730" y1="0" x2="730" y2="60" class="grid-line" />
+            <line x1="860" y1="0" x2="860" y2="60" class="grid-line" />
+            <line x1="1000" y1="0" x2="1000" y2="60" class="grid-line" />
+            
+            <line x1="0" y1="60" x2="1000" y2="60" class="grid-line" stroke-width="2" />
           </g>
 
           <!-- ================= FILA 2: ELECTROLITO ================= -->
           <g class="animar-fila">
-            <animate attributeName="opacity" from="0" to="1" dur="0.8s" begin="0.8s" fill="freeze" />
-            <animateTransform attributeName="transform" type="translate" from="0 40" to="0 0" dur="0.8s" begin="0.8s" fill="freeze" />
+            <animate attributeName="opacity" from="0" to="1" dur="0.5s" begin="0.8s" fill="freeze" />
+            <animateTransform attributeName="transform" type="translate" from="0 20" to="0 0" dur="0.5s" begin="0.8s" fill="freeze" />
             
             <rect x="0" y="60" width="200" height="140" class="label-bg" />
-            <rect x="200" y="60" width="133" height="140" class="cell-bg" />
-            <rect x="333" y="60" width="133" height="140" class="cell-bg" />
-            <rect x="466" y="60" width="134" height="140" class="cell-bg" />
-            <rect x="600" y="60" width="133" height="140" class="cell-bg" />
-            <rect x="733" y="60" width="133" height="140" class="cell-bg" />
-            <rect x="866" y="60" width="134" height="140" class="cell-bg" />
+            <rect x="200" y="60" width="130" height="140" class="cell-bg" />
+            <rect x="330" y="60" width="130" height="140" class="cell-bg" />
+            <rect x="460" y="60" width="140" height="140" class="cell-bg" />
+            <rect x="600" y="60" width="130" height="140" class="cell-bg" />
+            <rect x="730" y="60" width="130" height="140" class="cell-bg" />
+            <rect x="860" y="60" width="140" height="140" class="cell-bg" />
 
-            <text x="20" y="120" class="label-text">Electrolito</text>
+            <text x="20" y="110" class="label-text">Electrolito</text>
             
-            <text x="266.5" y="110" class="cell-text">Solución</text>
-            <text x="266.5" y="130" class="cell-text">alcalina</text>
+            <text x="265" y="110" class="cell-text">Solución</text>
+            <text x="265" y="132" class="cell-text">alcalina</text>
 
-            <text x="399.5" y="110" class="cell-text">Membrana de</text>
-            <text x="399.5" y="130" class="cell-text">polímero sólido</text>
+            <text x="395" y="110" class="cell-text">Membrana de</text>
+            <text x="395" y="132" class="cell-text">polímero sólido</text>
 
-            <text x="533" y="110" class="cell-text">Ácido</text>
-            <text x="533" y="130" class="cell-text">fosfórico</text>
+            <text x="530" y="110" class="cell-text">Ácido</text>
+            <text x="530" y="132" class="cell-text">fosfórico</text>
 
-            <text x="666.5" y="110" class="cell-text">Carbonatos</text>
-            <text x="666.5" y="130" class="cell-text">fundidos</text>
+            <text x="665" y="110" class="cell-text">Carbonatos</text>
+            <text x="665" y="132" class="cell-text">fundidos</text>
 
-            <text x="799.5" y="120" class="cell-text">Óxido sólido</text>
+            <text x="795" y="110" class="cell-text">Óxido sólido</text>
 
-            <text x="933" y="110" class="cell-text">Membrana de</text>
-            <text x="933" y="130" class="cell-text">polímero</text>
-            <text x="933" y="150" class="cell-text">sólido</text>
+            <text x="930" y="110" class="cell-text">Membrana de</text>
+            <text x="930" y="132" class="cell-text">polímero</text>
+            <text x="930" y="154" class="cell-text">sólido</text>
+
+            <!-- Líneas verticales -->
+            <line x1="200" y1="60" x2="200" y2="200" class="grid-line" />
+            <line x1="330" y1="60" x2="330" y2="200" class="grid-line" />
+            <line x1="460" y1="60" x2="460" y2="200" class="grid-line" />
+            <line x1="600" y1="60" x2="600" y2="200" class="grid-line" />
+            <line x1="730" y1="60" x2="730" y2="200" class="grid-line" />
+            <line x1="860" y1="60" x2="860" y2="200" class="grid-line" />
+            <line x1="1000" y1="60" x2="1000" y2="200" class="grid-line" />
+
+            <line x1="0" y1="200" x2="1000" y2="200" class="grid-line" />
           </g>
 
           <!-- ================= FILA 3: TEMPERATURA ================= -->
           <g class="animar-fila">
-            <animate attributeName="opacity" from="0" to="1" dur="0.8s" begin="1.4s" fill="freeze" />
-            <animateTransform attributeName="transform" type="translate" from="0 40" to="0 0" dur="0.8s" begin="1.4s" fill="freeze" />
+            <animate attributeName="opacity" from="0" to="1" dur="0.5s" begin="1.4s" fill="freeze" />
+            <animateTransform attributeName="transform" type="translate" from="0 20" to="0 0" dur="0.5s" begin="1.4s" fill="freeze" />
             
             <rect x="0" y="200" width="200" height="100" class="label-bg" />
-            <rect x="200" y="200" width="133" height="100" class="cell-bg" />
-            <rect x="333" y="200" width="133" height="100" class="cell-bg" />
-            <rect x="466" y="200" width="134" height="100" class="cell-bg" />
-            <rect x="600" y="200" width="133" height="100" class="cell-bg" />
-            <rect x="733" y="200" width="133" height="100" class="cell-bg" />
-            <rect x="866" y="200" width="134" height="100" class="cell-bg" />
+            <rect x="200" y="200" width="130" height="100" class="cell-bg" />
+            <rect x="330" y="200" width="130" height="100" class="cell-bg" />
+            <rect x="460" y="200" width="140" height="100" class="cell-bg" />
+            <rect x="600" y="200" width="130" height="100" class="cell-bg" />
+            <rect x="730" y="200" width="130" height="100" class="cell-bg" />
+            <rect x="860" y="200" width="140" height="100" class="cell-bg" />
 
             <text x="20" y="235" class="label-text">Temperatura</text>
             <text x="20" y="255" class="label-text">de operación</text>
             <text x="20" y="275" class="label-text">(ºC)</text>
 
-            <text x="266.5" y="250" class="cell-text">100-120</text>
-            <text x="399.5" y="250" class="cell-text">60-80</text>
-            <text x="533" y="250" class="cell-text">200-250</text>
-            <text x="666.5" y="250" class="cell-text">600-700</text>
-            <text x="799.5" y="250" class="cell-text">800-1000</text>
-            <text x="933" y="250" class="cell-text">50-120</text>
+            <text x="265" y="250" class="cell-text">100-120</text>
+            <text x="395" y="250" class="cell-text">60-80</text>
+            <text x="530" y="250" class="cell-text">200-250</text>
+            <text x="665" y="250" class="cell-text">600-700</text>
+            <text x="795" y="250" class="cell-text">800-1000</text>
+            <text x="930" y="250" class="cell-text">50-120</text>
+
+            <!-- Líneas verticales -->
+            <line x1="200" y1="200" x2="200" y2="300" class="grid-line" />
+            <line x1="330" y1="200" x2="330" y2="300" class="grid-line" />
+            <line x1="460" y1="200" x2="460" y2="300" class="grid-line" />
+            <line x1="600" y1="200" x2="600" y2="300" class="grid-line" />
+            <line x1="730" y1="200" x2="730" y2="300" class="grid-line" />
+            <line x1="860" y1="200" x2="860" y2="300" class="grid-line" />
+            <line x1="1000" y1="200" x2="1000" y2="300" class="grid-line" />
+
+            <line x1="0" y1="300" x2="1000" y2="300" class="grid-line" />
           </g>
 
           <!-- ================= FILA 4: RANGO DE POTENCIA ================= -->
           <g class="animar-fila">
-            <animate attributeName="opacity" from="0" to="1" dur="0.8s" begin="2.0s" fill="freeze" />
-            <animateTransform attributeName="transform" type="translate" from="0 40" to="0 0" dur="0.8s" begin="2.0s" fill="freeze" />
+            <animate attributeName="opacity" from="0" to="1" dur="0.5s" begin="2.0s" fill="freeze" />
+            <animateTransform attributeName="transform" type="translate" from="0 20" to="0 0" dur="0.5s" begin="2.0s" fill="freeze" />
             
             <rect x="0" y="300" width="200" height="100" class="label-bg" />
-            <rect x="200" y="300" width="133" height="100" class="cell-bg" />
-            <rect x="333" y="300" width="133" height="100" class="cell-bg" />
-            <rect x="466" y="300" width="134" height="100" class="cell-bg" />
-            <rect x="600" y="300" width="133" height="100" class="cell-bg" />
-            <rect x="733" y="300" width="133" height="100" class="cell-bg" />
-            <rect x="866" y="300" width="134" height="100" class="cell-bg" />
+            <rect x="200" y="300" width="130" height="100" class="cell-bg" />
+            <rect x="330" y="300" width="130" height="100" class="cell-bg" />
+            <rect x="460" y="300" width="140" height="100" class="cell-bg" />
+            <rect x="600" y="300" width="130" height="100" class="cell-bg" />
+            <rect x="730" y="300" width="130" height="100" class="cell-bg" />
+            <rect x="860" y="300" width="140" height="100" class="cell-bg" />
 
             <text x="20" y="335" class="label-text">Rango</text>
             <text x="20" y="355" class="label-text">potencia</text>
 
-            <text x="266.5" y="350" class="cell-text">5-150 kW</text>
-            <text x="399.5" y="350" class="cell-text">5-250 kW</text>
-            <text x="533" y="350" class="cell-text">50 kW -11MW</text>
-            <text x="666.5" y="350" class="cell-text">100kW-2MW</text>
-            <text x="799.5" y="350" class="cell-text">100-250kW</text>
-            <text x="933" y="350" class="cell-text">5kW</text>
+            <text x="265" y="350" class="cell-text">5-150 kW</text>
+            <text x="395" y="350" class="cell-text">5-250 kW</text>
+            <text x="530" y="350" class="cell-text">50 kW -11MW</text>
+            <text x="665" y="350" class="cell-text">100kW-2MW</text>
+            <text x="795" y="350" class="cell-text">100-250kW</text>
+            <text x="930" y="350" class="cell-text">5kW</text>
+
+            <!-- Líneas verticales -->
+            <line x1="200" y1="300" x2="200" y2="400" class="grid-line" />
+            <line x1="330" y1="300" x2="330" y2="400" class="grid-line" />
+            <line x1="460" y1="300" x2="460" y2="400" class="grid-line" />
+            <line x1="600" y1="300" x2="600" y2="400" class="grid-line" />
+            <line x1="730" y1="300" x2="730" y2="400" class="grid-line" />
+            <line x1="860" y1="300" x2="860" y2="400" class="grid-line" />
+            <line x1="1000" y1="300" x2="1000" y2="400" class="grid-line" />
+
+            <line x1="0" y1="400" x2="1000" y2="400" class="grid-line" />
           </g>
 
           <!-- ================= FILA 5: VENTAJAS ================= -->
           <g class="animar-fila">
-            <animate attributeName="opacity" from="0" to="1" dur="0.8s" begin="2.6s" fill="freeze" />
-            <animateTransform attributeName="transform" type="translate" from="0 40" to="0 0" dur="0.8s" begin="2.6s" fill="freeze" />
+            <animate attributeName="opacity" from="0" to="1" dur="0.5s" begin="2.5s" fill="freeze" />
+            <animateTransform attributeName="transform" type="translate" from="0 20" to="0 0" dur="0.5s" begin="2.5s" fill="freeze" />
             
             <rect x="0" y="400" width="200" height="220" class="label-bg" />
-            <rect x="200" y="400" width="133" height="220" class="cell-bg" />
-            <rect x="333" y="400" width="133" height="220" class="cell-bg" />
-            <rect x="466" y="400" width="134" height="220" class="cell-bg" />
-            <rect x="600" y="400" width="133" height="220" class="cell-bg" />
-            <rect x="733" y="400" width="133" height="220" class="cell-bg" />
-            <rect x="866" y="400" width="134" height="220" class="cell-bg" />
+            <rect x="200" y="400" width="130" height="220" class="cell-bg" />
+            <rect x="330" y="400" width="130" height="220" class="cell-bg" />
+            <rect x="460" y="400" width="140" height="220" class="cell-bg" />
+            <rect x="600" y="400" width="130" height="220" class="cell-bg" />
+            <rect x="730" y="400" width="130" height="220" class="cell-bg" />
+            <rect x="860" y="400" width="140" height="220" class="cell-bg" />
 
             <text x="20" y="440" class="label-text">Ventajas</text>
             
-            <text x="266.5" y="430" class="cell-text">Mayor</text>
-            <text x="266.5" y="450" class="cell-text">eficiencia,</text>
-            <text x="266.5" y="470" class="cell-text">reacción</text>
-            <text x="266.5" y="490" class="cell-text">catódica</text>
-            <text x="266.5" y="510" class="cell-text">más rápida</text>
+            <text x="265" y="430" class="cell-text">Mayor</text>
+            <text x="265" y="450" class="cell-text">eficiencia,</text>
+            <text x="265" y="470" class="cell-text">reacción</text>
+            <text x="265" y="490" class="cell-text">catódica</text>
+            <text x="265" y="510" class="cell-text">más rápida</text>
 
-            <text x="399.5" y="430" class="cell-text">Baja</text>
-            <text x="399.5" y="450" class="cell-text">temperatura,</text>
-            <text x="399.5" y="470" class="cell-text">arranque</text>
-            <text x="399.5" y="490" class="cell-text">rápido, baja</text>
-            <text x="399.5" y="510" class="cell-text">corrosión y</text>
-            <text x="399.5" y="530" class="cell-text">mantenimiento</text>
+            <text x="395" y="430" class="cell-text">Baja</text>
+            <text x="395" y="450" class="cell-text">temperatura,</text>
+            <text x="395" y="470" class="cell-text">arranque</text>
+            <text x="395" y="490" class="cell-text">rápido, baja</text>
+            <text x="395" y="510" class="cell-text">corrosión y</text>
+            <text x="395" y="530" class="cell-text">mantenimiento</text>
 
-            <text x="533" y="440" class="cell-text">Acepta H₂</text>
-            <text x="533" y="460" class="cell-text">impuro</text>
+            <text x="530" y="430" class="cell-text">Acepta H₂</text>
+            <text x="530" y="450" class="cell-text">impuro</text>
 
-            <text x="666.5" y="440" class="cell-text">Reformado</text>
-            <text x="666.5" y="460" class="cell-text">interno,</text>
-            <text x="666.5" y="480" class="cell-text">cogeneración</text>
+            <text x="665" y="430" class="cell-text">Reformado</text>
+            <text x="665" y="450" class="cell-text">interno,</text>
+            <text x="665" y="470" class="cell-text">cogeneración</text>
 
-            <text x="799.5" y="440" class="cell-text">Reformado</text>
-            <text x="799.5" y="460" class="cell-text">interno,</text>
-            <text x="799.5" y="480" class="cell-text">cogeneración</text>
+            <text x="795" y="430" class="cell-text">Reformado</text>
+            <text x="795" y="450" class="cell-text">interno,</text>
+            <text x="795" y="470" class="cell-text">cogeneración</text>
 
-            <text x="933" y="430" class="cell-text">No necesita</text>
-            <text x="933" y="450" class="cell-text">reformador</text>
-            <text x="933" y="470" class="cell-text">de</text>
-            <text x="933" y="490" class="cell-text">combustible</text>
+            <text x="930" y="430" class="cell-text">No necesita</text>
+            <text x="930" y="450" class="cell-text">reformador</text>
+            <text x="930" y="470" class="cell-text">de</text>
+            <text x="930" y="490" class="cell-text">combustible</text>
+
+            <!-- Líneas verticales -->
+            <line x1="200" y1="400" x2="200" y2="620" class="grid-line" />
+            <line x1="330" y1="400" x2="330" y2="620" class="grid-line" />
+            <line x1="460" y1="400" x2="460" y2="620" class="grid-line" />
+            <line x1="600" y1="400" x2="600" y2="620" class="grid-line" />
+            <line x1="730" y1="400" x2="730" y2="620" class="grid-line" />
+            <line x1="860" y1="400" x2="860" y2="620" class="grid-line" />
+            <line x1="1000" y1="400" x2="1000" y2="620" class="grid-line" />
+
+            <line x1="0" y1="620" x2="1000" y2="620" class="grid-line" />
           </g>
 
           <!-- ================= FILA 6: APLICACIONES ================= -->
           <g class="animar-fila">
-            <animate attributeName="opacity" from="0" to="1" dur="0.8s" begin="3.2s" fill="freeze" />
-            <animateTransform attributeName="transform" type="translate" from="0 40" to="0 0" dur="0.8s" begin="3.2s" fill="freeze" />
+            <animate attributeName="opacity" from="0" to="1" dur="0.5s" begin="3.0s" fill="freeze" />
+            <animateTransform attributeName="transform" type="translate" from="0 20" to="0 0" dur="0.5s" begin="3.0s" fill="freeze" />
             
-            <rect x="0" y="620" width="200" height="100" class="label-bg" />
-            <rect x="200" y="620" width="133" height="100" class="cell-bg" />
-            <rect x="333" y="620" width="133" height="100" class="cell-bg" />
-            <rect x="466" y="620" width="134" height="100" class="cell-bg" />
-            <rect x="600" y="620" width="133" height="100" class="cell-bg" />
-            <rect x="733" y="620" width="133" height="100" class="cell-bg" />
-            <rect x="866" y="620" width="134" height="100" class="cell-bg" />
+            <rect x="0" y="620" width="200" height="140" class="label-bg" />
+            <rect x="200" y="620" width="130" height="140" class="cell-bg" />
+            <rect x="330" y="620" width="130" height="140" class="cell-bg" />
+            <rect x="460" y="620" width="140" height="140" class="cell-bg" />
+            <rect x="600" y="620" width="130" height="140" class="cell-bg" />
+            <rect x="730" y="620" width="130" height="140" class="cell-bg" />
+            <rect x="860" y="620" width="140" height="140" class="cell-bg" />
 
-            <text x="20" y="670" class="label-text">Aplicaciones</text>
+            <text x="20" y="690" class="label-text">Aplicaciones</text>
 
-            <text x="266.5" y="670" class="cell-text">Espaciales</text>
+            <text x="265" y="690" class="cell-text">Espaciales</text>
 
-            <text x="399.5" y="650" class="cell-text">Transporte,</text>
-            <text x="399.5" y="670" class="cell-text">portátiles,</text>
-            <text x="399.5" y="690" class="cell-text">residencial.</text>
+            <text x="395" y="670" class="cell-text">Transporte,</text>
+            <text x="395" y="690" class="cell-text">portátiles,</text>
+            <text x="395" y="710" class="cell-text">residencial.</text>
 
-            <text x="533" y="650" class="cell-text">Generación</text>
-            <text x="533" y="670" class="cell-text">eléctrica</text>
-            <text x="533" y="690" class="cell-text">distribuida y</text>
-            <text x="533" y="710" class="cell-text">calor</text>
+            <text x="530" y="670" class="cell-text">Generación</text>
+            <text x="530" y="690" class="cell-text">eléctrica</text>
+            <text x="530" y="710" class="cell-text">distribuida y</text>
+            <text x="530" y="730" class="cell-text">calor</text>
 
-            <text x="666.5" y="650" class="cell-text">Generación</text>
-            <text x="666.5" y="670" class="cell-text">eléctrica</text>
-            <text x="666.5" y="690" class="cell-text">distribuida y</text>
-            <text x="666.5" y="710" class="cell-text">calor</text>
+            <text x="665" y="670" class="cell-text">Generación</text>
+            <text x="665" y="690" class="cell-text">eléctrica</text>
+            <text x="665" y="710" class="cell-text">distribuida y</text>
+            <text x="665" y="730" class="cell-text">calor</text>
 
-            <text x="799.5" y="650" class="cell-text">Generación</text>
-            <text x="799.5" y="670" class="cell-text">eléctrica</text>
-            <text x="799.5" y="690" class="cell-text">distribuida y</text>
-            <text x="799.5" y="710" class="cell-text">calor</text>
+            <text x="795" y="670" class="cell-text">Generación</text>
+            <text x="795" y="690" class="cell-text">eléctrica</text>
+            <text x="795" y="710" class="cell-text">distribuida y</text>
+            <text x="795" y="730" class="cell-text">calor</text>
 
-            <text x="933" y="670" class="cell-text">Portátiles</text>
-          </g>
+            <text x="930" y="690" class="cell-text">Portátiles</text>
 
-          <!-- ================= LÍNEAS DE LA CUADRÍCULA ================= -->
-          <g class="animar-fila">
-            <animate attributeName="opacity" from="0" to="1" dur="1s" begin="3.5s" fill="freeze" />
-            <line x1="0" y1="60" x2="1000" y2="60" class="grid-line" />
-            <line x1="0" y1="200" x2="1000" y2="200" class="grid-line" />
-            <line x1="0" y1="300" x2="1000" y2="300" class="grid-line" />
-            <line x1="0" y1="400" x2="1000" y2="400" class="grid-line" />
-            <line x1="0" y1="620" x2="1000" y2="620" class="grid-line" />
-            <line x1="0" y1="720" x2="1000" y2="720" class="grid-line" />
+            <!-- Líneas verticales finales -->
+            <line x1="200" y1="620" x2="200" y2="760" class="grid-line" />
+            <line x1="330" y1="620" x2="330" y2="760" class="grid-line" />
+            <line x1="460" y1="620" x2="460" y2="760" class="grid-line" />
+            <line x1="600" y1="620" x2="600" y2="760" class="grid-line" />
+            <line x1="730" y1="620" x2="730" y2="760" class="grid-line" />
+            <line x1="860" y1="620" x2="860" y2="760" class="grid-line" />
+            <line x1="1000" y1="620" x2="1000" y2="760" class="grid-line" />
             
-            <line x1="200" y1="0" x2="200" y2="720" class="grid-line" />
-            <line x1="333" y1="0" x2="333" y2="720" class="grid-line" />
-            <line x1="466" y1="0" x2="466" y2="720" class="grid-line" />
-            <line x1="600" y1="0" x2="600" y2="720" class="grid-line" />
-            <line x1="733" y1="0" x2="733" y2="720" class="grid-line" />
-            <line x1="866" y1="0" x2="866" y2="720" class="grid-line" />
-            <line x1="1000" y1="0" x2="1000" y2="720" class="grid-line" stroke-width="2" />
+            <!-- Borde inferior explícito -->
+            <line x1="0" y1="760" x2="1000" y2="760" class="grid-line" stroke-width="2" />
           </g>
 
         </svg>
