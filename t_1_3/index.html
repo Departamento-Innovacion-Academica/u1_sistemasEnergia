@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Etapas del Sistema Energético - Línea de Tiempo Interactiva</title>
+    <style>
+        /* Paleta de colores basada en #582A51 */
+        :root {
+            --primary: #582A51;
+            --primary-dark: #3E1C39;
+            --primary-light: #7A3B71;
+            --primary-alpha: rgba(88, 42, 81, 0.05);
+            --bg-body: #F8F5F8;
+            --bg-card: #FFFFFF;
+            --text-dark: #2C1A2A;
+            --text-light: #7A5C76;
+            --border-color: #E0D0DF;
+            --shadow-color: rgba(88, 42, 81, 0.15);
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100vh;
+            background-color: var(--bg-body);
+            font-family: 'Segoe UI', Arial, sans-serif;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        /* Fondo con patrón de cuadrícula sutil */
+        .background-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(var(--border-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
+            background-size: 40px 40px;
+            opacity: 0.4;
+            z-index: -2; /* Detrás de todo */
+            pointer-events: none;
+        }
+
+        .contenedor-principal {
+            width: 100%;
+            max-width: 1200px;
+            padding: 40px clamp(20px, 5vw, 60px);
+            box-sizing: border-box;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Instrucción en la parte superior derecha */
+        .instruccion {
+            position: absolute;
+            top: 10px;
+            right: clamp(20px, 5vw, 60px);
+            background: var(--bg-card);
+            color: var(--text-dark);
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 4px 15px var(--shadow-color);
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: fadeInDown 0.8s ease forwards;
+            z-index: 10;
+        }
+
+        .instruccion svg {
+            width: 18px;
+            height: 18px;
+            fill: var(--primary);
+        }
+
+        /* Línea de tiempo */
+        .linea-tiempo {
+            position: relative;
+            max-width: 1000px;
+            margin: 80px auto 0;
+            padding: 20px 0;
+        }
+
+        /* La línea vertical central (AHORA DETRÁS DE LOS NODOS) */
+        .linea-tiempo::after {
+            content: '';
+            position: absolute;
+            width: 4px;
+            background-color: var(--primary-light);
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -2px;
+            border-radius: 2px;
+            opacity: 0.25; /* Más sutil para que se vea como un fondo */
+            z-index: -1; /* Se coloca detrás de los nodos */
+        }
+
+        /* Contenedor de cada ítem */
+        .item-tiempo {
+            padding: 10px 40px;
+            position: relative;
+            background-color: transparent;
+            width: 50%;
+            box-sizing: border-box;
+            opacity: 0;
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        /* Lado izquierdo */
+        .item-tiempo.izquierda {
+            left: 0;
+            text-align: right;
+        }
+
+        /* Lado derecho */
+        .item-tiempo.derecha {
+            left: 50%;
+            text-align: left;
+        }
+
+        /* El círculo con el número (NODO) */
+        .nodo-numero {
+            width: 50px;
+            height: 50px;
+            background-color: var(--bg-card); /* Fondo blanco sólido */
+            border: 3px solid var(--primary);
+            border-radius: 10px;
+            position: absolute;
+            top: 15px;
+            z-index: 2; /* Asegura que el nodo esté por encima de la línea */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 22px;
+            font-weight: bold;
+            color: var(--primary);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        /* Posicionamiento del nodo para el lado izquierdo */
+        .item-tiempo.izquierda .nodo-numero {
+            right: -25px;
+        }
+
+        /* Posicionamiento del nodo para el lado derecho */
+        .item-tiempo.derecha .nodo-numero {
+            left: -25px;
+        }
+
+        /* Efecto Hover del nodo */
+        .nodo-numero:hover, .nodo-numero.activo {
+            background-color: var(--primary);
+            color: #FFFFFF;
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px var(--shadow-color);
+        }
+
+        /* Contenido de la tarjeta */
+        .contenido-item {
+            padding: 20px 30px;
+            background-color: var(--bg-card);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+            position: relative;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            overflow: hidden;
+        }
+
+        /* Línea conectora horizontal */
+        .item-tiempo.izquierda .contenido-item::before {
+            content: '';
+            position: absolute;
+            top: 40px;
+            right: -40px;
+            width: 40px;
+            height: 2px;
+            background-color: var(--primary-light);
+            opacity: 0.5;
+            z-index: -1;
+        }
+
+        .item-tiempo.derecha .contenido-item::before {
+            content: '';
+            position: absolute;
+            top: 40px;
+            left: -40px;
+            width: 40px;
+            height: 2px;
+            background-color: var(--primary-light);
+            opacity: 0.5;
+            z-index: -1;
+        }
+
+        /* Efecto Hover de la tarjeta */
+        .contenido-item:hover {
+            box-shadow: 0 10px 25px var(--shadow-color);
+            border-color: var(--primary-light);
+        }
+
+        .contenido-item h3 {
+            color: var(--primary);
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0 0 15px 0;
+        }
+
+        .contenido-item p {
+            color: var(--text-dark);
+            font-size: 15px;
+            line-height: 1.7;
+            margin: 0;
+        }
+
+        /* Ocultar el texto largo inicialmente para efecto acordeón */
+        .texto-completo {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out, opacity 0.5s ease-out, margin-top 0.5s ease-out;
+            opacity: 0;
+            margin-top: 0;
+        }
+
+        .contenido-item.expandido .texto-completo {
+            max-height: 500px;
+            opacity: 1;
+            margin-top: 15px;
+        }
+
+        .texto-resumen {
+            color: var(--text-light);
+            font-size: 14px;
+            font-style: italic;
+            transition: opacity 0.3s ease;
+        }
+
+        .contenido-item.expandido .texto-resumen {
+            display: none;
+        }
+
+        /* Animaciones de entrada */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Media queries para responsividad */
+        @media (max-width: 768px) {
+            .contenedor-principal {
+                padding: 20px;
+            }
+            .instruccion {
+                position: relative;
+                top: 0;
+                right: 0;
+                margin: 0 auto 20px auto;
+                justify-content: center;
+                width: fit-content;
+                font-size: 12px;
+            }
+            .linea-tiempo::after {
+                left: 30px;
+            }
+            .item-tiempo {
+                width: 100%;
+                padding-left: 70px;
+                padding-right: 0;
+                text-align: left !important;
+            }
+            .item-tiempo.izquierda, .item-tiempo.derecha {
+                left: 0;
+            }
+            .item-tiempo.izquierda .nodo-numero,
+            .item-tiempo.derecha .nodo-numero {
+                left: 5px;
+                right: auto;
+            }
+            .item-tiempo.izquierda .contenido-item::before,
+            .item-tiempo.derecha .contenido-item::before {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Fondo de cuadrícula sutil -->
+    <div class="background-grid"></div>
+
+    <div class="contenedor-principal">
+        
+        <!-- Instrucción -->
+        <div class="instruccion">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+            Haga clic sobre cada etapa para ampliar la información
+        </div>
+
+        <!-- Línea de tiempo -->
+        <div class="linea-tiempo">
+            
+            <!-- Etapa 1: Extracción -->
+            <div class="item-tiempo izquierda animar-entrada" style="animation-delay: 0.2s;">
+                <div class="nodo-numero" onclick="toggleItem(this)">1</div>
+                <div class="contenido-item" onclick="toggleItem(this)">
+                    <h3>Extracción</h3>
+                    <p class="texto-resumen">Obtención directa de recursos energéticos naturales...</p>
+                    <p class="texto-completo">
+                        Corresponde a la obtención directa de los recursos energéticos naturales. En el caso de fuentes no renovables, esto incluye la minería de carbón, la extracción de petróleo y gas natural. Para fuentes renovables, comprende la captación directa de radiación solar, el aprovechamiento del viento, el agua o la biomasa.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Etapa 2: Transformación -->
+            <div class="item-tiempo derecha animar-entrada" style="animation-delay: 0.4s;">
+                <div class="nodo-numero" onclick="toggleItem(this)">2</div>
+                <div class="contenido-item" onclick="toggleItem(this)">
+                    <h3>Transformación</h3>
+                    <p class="texto-resumen">Conversión de recursos primarios en formas utilizables...</p>
+                    <p class="texto-completo">
+                        Los recursos primarios deben transformarse en formas secundarias de energía que sean utilizables o transportables. Por ejemplo, la conversión del carbón en electricidad mediante una central termoeléctrica.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Etapa 3: Transporte y distribución -->
+            <div class="item-tiempo izquierda animar-entrada" style="animation-delay: 0.6s;">
+                <div class="nodo-numero" onclick="toggleItem(this)">3</div>
+                <div class="contenido-item" onclick="toggleItem(this)">
+                    <h3>Transporte y distribución</h3>
+                    <p class="texto-resumen">Traslado de la energía hacia los centros de consumo...</p>
+                    <p class="texto-completo">
+                        La energía transformada se transporta hacia los centros de consumo a través de redes de vectores energéticos. Para la electricidad, esto implica líneas de transmisión de alta y media tensión, mientras que los combustibles líquidos o gaseosos se transportan mediante oleoductos, gasoductos o sistemas de distribución en cisternas.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Etapa 4: Almacenamiento -->
+            <div class="item-tiempo derecha animar-entrada" style="animation-delay: 0.8s;">
+                <div class="nodo-numero" onclick="toggleItem(this)">4</div>
+                <div class="contenido-item" onclick="toggleItem(this)">
+                    <h3>Almacenamiento</h3>
+                    <p class="texto-resumen">Reserva de energía para su uso posterior...</p>
+                    <p class="texto-completo">
+                        Dado que algunas formas de energía no se consumen inmediatamente después de su producción, es necesario almacenarlas. Existen distintos sistemas de almacenamiento según la forma energética: baterías para energía eléctrica, embalses en el caso de energía hidráulica, tanques criogénicos para hidrógeno, entre otros.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Etapa 5: Consumo final -->
+            <div class="item-tiempo izquierda animar-entrada" style="animation-delay: 1.0s;">
+                <div class="nodo-numero" onclick="toggleItem(this)">5</div>
+                <div class="contenido-item" onclick="toggleItem(this)">
+                    <h3>Consumo final</h3>
+                    <p class="texto-resumen">Uso de la energía por parte del usuario final...</p>
+                    <p class="texto-completo">
+                        En esta etapa, la energía llega en su forma útil al usuario final, quien la emplea para iluminación, calefacción, procesos industriales, transporte, refrigeración u otros usos específicos.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Función para expandir o contraer el contenido de la tarjeta
+        function toggleItem(elemento) {
+            let contenidoItem;
+            if (elemento.classList.contains('nodo-numero')) {
+                contenidoItem = elemento.nextElementSibling;
+            } else {
+                contenidoItem = elemento;
+            }
+
+            contenidoItem.classList.toggle('expandido');
+            
+            const nodo = contenidoItem.previousElementSibling;
+            if (nodo && nodo.classList.contains('nodo-numero')) {
+                nodo.classList.toggle('activo');
+            }
+        }
+    </script>
+
+</body>
+</html>
