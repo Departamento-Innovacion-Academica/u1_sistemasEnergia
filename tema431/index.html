@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Componentes de una Pila de Combustible - Línea de Tiempo Interactiva</title>
+    <style>
+        /* Paleta de colores basada en #582A51 */
+        :root {
+            --primary: #582A51;
+            --primary-dark: #3E1C39;
+            --primary-light: #7A3B71;
+            --primary-alpha: rgba(88, 42, 81, 0.05);
+            --primary-alpha-med: rgba(88, 42, 81, 0.12);
+            --bg-body: #F8F5F8;
+            --bg-card: #FFFFFF;
+            --text-dark: #2C1A2A;
+            --text-light: #7A5C76;
+            --border-color: #E0D0DF;
+            --shadow-color: rgba(88, 42, 81, 0.15);
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100vh;
+            background-color: var(--bg-body);
+            font-family: 'Segoe UI', Arial, sans-serif;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            padding: 40px 20px;
+        }
+
+        /* Fondo con patrón de cuadrícula sutil */
+        .background-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(var(--border-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
+            background-size: 40px 40px;
+            opacity: 0.4;
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        .contenedor-principal {
+            width: 100%;
+            max-width: 1400px;
+            padding: 60px clamp(20px, 5vw, 60px);
+            box-sizing: border-box;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Instrucción en la parte superior derecha */
+        .instruccion {
+            position: absolute;
+            top: 10px;
+            right: clamp(20px, 5vw, 60px);
+            background: var(--bg-card);
+            color: var(--text-dark);
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 4px 15px var(--shadow-color);
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: fadeInDown 0.8s ease forwards;
+            z-index: 10;
+        }
+
+        .instruccion svg {
+            width: 18px;
+            height: 18px;
+            fill: var(--primary);
+        }
+
+        /* Línea de tiempo horizontal */
+        .linea-tiempo {
+            position: relative;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-top: 60px;
+        }
+
+        /* Línea horizontal superior (detrás de los nodos) */
+        .linea-tiempo::before {
+            content: '';
+            position: absolute;
+            top: 25px;
+            left: 5%;
+            right: 5%;
+            height: 3px;
+            background-color: var(--primary-light);
+            border-radius: 2px;
+            opacity: 0.4;
+            z-index: 0;
+        }
+
+        /* Cada paso */
+        .paso {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 1;
+        }
+
+        /* Nodo cuadrado con número */
+        .nodo {
+            width: 50px;
+            height: 50px;
+            background-color: var(--bg-card);
+            border: 3px solid var(--primary);
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 22px;
+            font-weight: bold;
+            color: var(--primary);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            z-index: 2;
+            position: relative;
+        }
+
+        .nodo:hover {
+            transform: scale(1.1);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .paso.activo .nodo {
+            background-color: var(--primary);
+            color: #FFFFFF;
+            transform: scale(1.15);
+            box-shadow: 0 10px 25px var(--shadow-color);
+        }
+
+        /* Línea conectora vertical desde el nodo hacia el texto */
+        .conector {
+            width: 2px;
+            height: 30px;
+            background-color: var(--primary-light);
+            opacity: 0.6;
+            z-index: 1;
+        }
+
+        /* Contenedor de texto */
+        .contenido {
+            text-align: center;
+            padding: 10px 15px;
+            width: 100%;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        /* Título */
+        .titulo {
+            color: var(--primary);
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0 0 20px 0;
+            line-height: 1.3;
+        }
+
+        /* Texto resumen (corto) */
+        .resumen {
+            color: var(--text-light);
+            font-size: 14px;
+            font-style: italic;
+            line-height: 1.6;
+            margin: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .paso.activo .resumen {
+            display: none;
+        }
+
+        /* Texto completo */
+        .texto-completo {
+            color: var(--text-dark);
+            font-size: 14.5px;
+            line-height: 1.7;
+            margin: 0;
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height 0.6s ease-out, opacity 0.5s ease-out, margin-top 0.5s ease-out;
+        }
+
+        .paso.activo .texto-completo {
+            max-height: 500px;
+            opacity: 1;
+            margin-top: 10px;
+        }
+
+        /* Efecto Focus: cuando un paso está activo, los demás se atenúan */
+        .linea-tiempo.con-activo .paso:not(.activo) {
+            opacity: 0.4;
+            filter: grayscale(0.6);
+        }
+
+        /* Animaciones de entrada */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animar-entrada {
+            opacity: 0;
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        /* Media queries */
+        @media (max-width: 900px) {
+            .linea-tiempo {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 40px;
+            }
+            .linea-tiempo::before {
+                display: none;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .contenedor-principal {
+                padding: 20px;
+            }
+            .instruccion {
+                position: relative;
+                top: 0;
+                right: 0;
+                margin: 0 auto 30px auto;
+                justify-content: center;
+                width: fit-content;
+                font-size: 12px;
+            }
+            .linea-tiempo {
+                grid-template-columns: 1fr;
+                gap: 30px;
+                margin-top: 20px;
+            }
+            .nodo {
+                width: 45px;
+                height: 45px;
+                font-size: 18px;
+            }
+            .titulo {
+                font-size: 19px;
+            }
+            .texto-completo {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Fondo de cuadrícula sutil -->
+    <div class="background-grid"></div>
+
+    <div class="contenedor-principal">
+        
+        <!-- Instrucción -->
+        <div class="instruccion">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+            Haga clic sobre cada componente para ampliar la información
+        </div>
+
+        <!-- Línea de tiempo horizontal -->
+        <div class="linea-tiempo" id="lineaTiempo">
+            
+            <!-- Paso 1: Electrodos -->
+            <div class="paso animar-entrada" style="animation-delay: 0.2s;" onclick="togglePaso(this)">
+                <div class="nodo">1</div>
+                <div class="conector"></div>
+                <div class="contenido">
+                    <h3 class="titulo">Electrodos</h3>
+                    <p class="resumen">Componentes donde ocurren las reacciones electroquímicas: ánodo y cátodo...</p>
+                    <p class="texto-completo">
+                        Son los componentes donde ocurren las reacciones electroquímicas. El ánodo recibe el combustible y el cátodo, el comburente, permitiendo el flujo de electrones hacia el circuito externo y el paso de iones a través del electrolito.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Paso 2: Electrolito -->
+            <div class="paso animar-entrada" style="animation-delay: 0.4s;" onclick="togglePaso(this)">
+                <div class="nodo">2</div>
+                <div class="conector"></div>
+                <div class="contenido">
+                    <h3 class="titulo">Electrolito</h3>
+                    <p class="resumen">Medio aislante que transporta iones entre los electrodos...</p>
+                    <p class="texto-completo">
+                        Medio aislante que transporta iones entre los electrodos. Su función es forzar a los electrones a recorrer el circuito externo, lo que permite aprovechar la energía generada.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Paso 3: Placas bipolares -->
+            <div class="paso animar-entrada" style="animation-delay: 0.6s;" onclick="togglePaso(this)">
+                <div class="nodo">3</div>
+                <div class="conector"></div>
+                <div class="contenido">
+                    <h3 class="titulo">Placas bipolares</h3>
+                    <p class="resumen">Elementos que conectan eléctricamente las celdas y distribuyen los gases...</p>
+                    <p class="texto-completo">
+                        Elementos que conectan eléctricamente las celdas y distribuyen los gases. Deben ser conductoras, resistentes a la corrosión y con baja permeabilidad, además de ser económicamente viables.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Paso 4: Pila -->
+            <div class="paso animar-entrada" style="animation-delay: 0.8s;" onclick="togglePaso(this)">
+                <div class="nodo">4</div>
+                <div class="conector"></div>
+                <div class="contenido">
+                    <h3 class="titulo">Pila</h3>
+                    <p class="resumen">Conjunto de celdas conectadas en serie con sistemas auxiliares...</p>
+                    <p class="texto-completo">
+                        Es el conjunto de celdas conectadas en serie que incluye sistemas auxiliares para control térmico, suministro de combustible y regulación de humedad. Es una unidad completa, adaptada a aplicaciones específicas.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Función para activar/desactivar un paso y aplicar efecto focus
+        function togglePaso(elemento) {
+            const linea = document.getElementById('lineaTiempo');
+            const estaActivo = elemento.classList.contains('activo');
+            
+            if (estaActivo) {
+                elemento.classList.remove('activo');
+                linea.classList.remove('con-activo');
+            } else {
+                document.querySelectorAll('.paso').forEach(p => p.classList.remove('activo'));
+                elemento.classList.add('activo');
+                linea.classList.add('con-activo');
+            }
+        }
+    </script>
+
+</body>
+</html>
