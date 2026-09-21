@@ -3,327 +3,509 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Glosario Energético - Futurista Sutil</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Glosario Interactivo - Sistema Energético</title>
     <style>
+        /* Paleta de colores basada en #582A51 */
         :root {
-            --primary: #03223D;
-            --secondary: #0A4D7A;
-            --accent: #4A90B8; /* Cian apagado */
-            --bg: #F4F8FB;
-            --text-main: #1a1a1a;
-            --text-muted: #4A5568;
-            --glass-bg: rgba(255, 255, 255, 0.65);
-            --glass-border: rgba(74, 144, 184, 0.25);
-            --shadow: 0 8px 32px rgba(3, 34, 61, 0.1);
-            --shadow-hover: 0 15px 40px rgba(3, 34, 61, 0.2), 0 0 15px rgba(74, 144, 184, 0.2);
+            --primary: #582A51;
+            --primary-dark: #3E1C39;
+            --primary-light: #7A3B71;
+            --primary-alpha: rgba(88, 42, 81, 0.1);
+            --primary-alpha-hover: rgba(88, 42, 81, 0.2);
+            --bg-body: #F8F5F8;
+            --bg-card: #FFFFFF;
+            --text-dark: #2C1A2A;
+            --text-light: #7A5C76;
+            --border-color: #E0D0DF;
+            --shadow-color: rgba(88, 42, 81, 0.15);
+            
+            /* Colores de etiquetas */
+            --tag-renovable-bg: rgba(88, 42, 81, 0.1);
+            --tag-renovable-text: #582A51;
+            --tag-no-renovable-bg: rgba(220, 100, 90, 0.15);
+            --tag-no-renovable-text: #A13A37;
+            --tag-vector-bg: rgba(200, 150, 50, 0.15);
+            --tag-vector-text: #8A6A1A;
         }
 
-        * {
+        body, html {
             margin: 0;
             padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-body);
+            font-family: 'Segoe UI', Arial, sans-serif;
             box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--bg);
-            background-image: 
-                linear-gradient(rgba(3, 34, 61, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(3, 34, 61, 0.03) 1px, transparent 1px);
-            background-size: 40px 40px;
-            color: var(--text-main);
-            padding: 60px 20px;
-            min-height: 100vh;
             overflow-x: hidden;
         }
 
-        /* --- INSTRUCCIÓN SUPERIOR DERECHA --- */
-        .instruction {
+        /* Fondo con patrón de cuadrícula sutil */
+        .background-grid {
             position: fixed;
-            top: 20px;
-            right: 30px;
-            font-size: 0.75rem;
-            font-weight: 300;
-            color: var(--secondary);
-            background: rgba(255, 255, 255, 0.7);
-            border: 1px solid var(--glass-border);
-            padding: 8px 16px;
-            border-radius: 20px;
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            box-shadow: 0 4px 12px rgba(3, 34, 61, 0.05);
-            z-index: 100;
-            text-align: center;
-            animation: softPulse 3s infinite ease-in-out;
-        }
-
-        @keyframes softPulse {
-            0%, 100% { opacity: 0.85; transform: translateY(0); }
-            50% { opacity: 1; transform: translateY(-2px); }
-        }
-
-        /* --- FILTROS --- */
-        .filters {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            flex-wrap: wrap;
-            margin-bottom: 60px;
-            margin-top: 30px; /* Espacio para la instrucción */
-        }
-
-        .filter-btn {
-            background: rgba(255, 255, 255, 0.5);
-            border: 1px solid var(--glass-border);
-            color: var(--secondary);
-            padding: 12px 28px;
-            border-radius: 50px;
-            font-family: 'Poppins', sans-serif;
-            font-size: 0.85rem;
-            font-weight: 500;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            cursor: pointer;
-            backdrop-filter: blur(10px);
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-        }
-
-        .filter-btn:hover {
-            border-color: var(--accent);
-            color: var(--primary);
-            box-shadow: 0 0 12px rgba(74, 144, 184, 0.25);
-            transform: translateY(-2px);
-        }
-
-        .filter-btn.active {
-            background: var(--primary);
-            border-color: var(--accent);
-            color: #ffffff;
-            box-shadow: 0 4px 20px rgba(3, 34, 61, 0.4), 0 0 15px rgba(74, 144, 184, 0.3);
-        }
-
-        /* --- GRID DE TARJETAS --- */
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-            gap: 30px;
-            max-width: 1400px;
-            margin: 0 auto;
-            perspective: 1000px;
-        }
-
-        .card {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            padding: 30px;
-            cursor: pointer;
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            position: relative;
-            overflow: hidden;
-            box-shadow: var(--shadow);
-            transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
-            animation: fadeInUp 0.8s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
-            opacity: 0;
-            transform-style: preserve-3d;
-        }
-
-        .card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(74, 144, 184, 0.08) 0%, transparent 60%);
-            opacity: 0;
-            transition: opacity 0.5s;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(var(--border-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
+            background-size: 40px 40px;
+            opacity: 0.3;
+            z-index: -1;
             pointer-events: none;
         }
 
-        .card:hover {
-            transform: translateY(-10px) rotateX(5deg) rotateY(-5deg) scale(1.02);
-            box-shadow: var(--shadow-hover);
-            border-color: var(--accent);
+        .contenedor-principal {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px clamp(20px, 5vw, 60px);
+            box-sizing: border-box;
         }
 
-        .card:hover::before {
-            opacity: 1;
+        /* Instrucción en la parte superior derecha */
+        .instruccion {
+            align-self: flex-end;
+            background: var(--bg-card);
+            color: var(--text-dark);
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 4px 15px var(--shadow-color);
+            margin-bottom: 30px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: fadeIn 0.8s ease forwards;
         }
 
-        .card-header {
+        .instruccion svg {
+            width: 18px;
+            height: 18px;
+            fill: var(--primary);
+        }
+
+        /* Barra de filtros */
+        .filtros {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 40px;
+            justify-content: center;
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        .btn-filtro {
+            background: var(--bg-card);
+            color: var(--primary);
+            border: 2px solid var(--border-color);
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+        }
+
+        .btn-filtro:hover {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px var(--shadow-color);
+        }
+
+        .btn-filtro.activo {
+            background: var(--primary);
+            color: #FFFFFF;
+            border-color: var(--primary);
+            box-shadow: 0 8px 20px var(--shadow-color);
+        }
+
+        /* Grid de conceptos */
+        .grid-conceptos {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 25px;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        /* Tarjetas de conceptos */
+        .tarjeta-concepto {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            z-index: 2;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
             position: relative;
+            overflow: hidden;
         }
 
-        .card-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: var(--primary);
-            line-height: 1.4;
-            letter-spacing: -0.5px;
+        .tarjeta-concepto::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 5px;
+            background: var(--primary);
+            transform: scaleY(0);
+            transition: transform 0.4s ease;
+            transform-origin: bottom;
         }
 
-        .card-badge {
-            font-size: 0.65rem;
+        .tarjeta-concepto:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px var(--shadow-color);
+            border-color: var(--primary-light);
+        }
+
+        .tarjeta-concepto:hover::before {
+            transform: scaleY(1);
+        }
+
+        .tarjeta-concepto h3 {
+            color: var(--text-dark);
+            font-size: 20px;
             font-weight: 700;
+            margin: 0;
+            flex: 1;
+            padding-right: 15px;
+        }
+
+        /* Etiquetas de categoría */
+        .etiqueta {
             padding: 6px 14px;
-            border-radius: 20px;
-            background: rgba(74, 144, 184, 0.12);
-            border: 1px solid rgba(74, 144, 184, 0.3);
-            color: var(--secondary);
+            border-radius: 50px;
+            font-size: 11px;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
+            letter-spacing: 0.5px;
             white-space: nowrap;
         }
 
-        .card-content {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-            font-weight: 300;
-            line-height: 1.7;
-            max-height: 0;
+        .etiqueta.renovable {
+            background: var(--tag-renovable-bg);
+            color: var(--tag-renovable-text);
+            border: 1px solid rgba(88, 42, 81, 0.2);
+        }
+
+        .etiqueta.no-renovable {
+            background: var(--tag-no-renovable-bg);
+            color: var(--tag-no-renovable-text);
+            border: 1px solid rgba(220, 100, 90, 0.2);
+        }
+
+        .etiqueta.vector {
+            background: var(--tag-vector-bg);
+            color: var(--tag-vector-text);
+            border: 1px solid rgba(200, 150, 50, 0.2);
+        }
+
+        /* Modal de información ampliada */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(44, 26, 42, 0.7);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
             opacity: 0;
-            overflow: hidden;
-            transition: max-height 0.6s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.4s ease;
-            z-index: 2;
-            position: relative;
+            transition: opacity 0.3s ease;
+            padding: 20px;
+            box-sizing: border-box;
         }
 
-        .card.expanded .card-content {
-            max-height: 600px;
+        .modal-overlay.activo {
+            display: flex;
             opacity: 1;
-            margin-top: 20px;
         }
 
-        .card.expanded {
-            transform: scale(1.03);
-            box-shadow: var(--shadow-hover);
-            border-color: var(--accent);
+        .modal-contenido {
+            background: var(--bg-card);
+            border-radius: 20px;
+            border-top: 6px solid var(--primary);
+            max-width: 700px;
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            padding: 40px;
+            position: relative;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.4);
+            transform: translateY(30px);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-sizing: border-box;
         }
 
-        .card-bibliography {
+        .modal-overlay.activo .modal-contenido {
+            transform: translateY(0);
+        }
+
+        .modal-contenido h2 {
+            color: var(--primary);
+            font-size: 28px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 15px;
+            padding-right: 30px;
+        }
+
+        .modal-contenido p {
+            color: var(--text-dark);
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .modal-contenido .fuente-modal {
+            font-style: italic;
+            color: var(--text-light);
+            font-size: 14px;
             margin-top: 20px;
             padding-top: 15px;
-            border-top: 1px dashed rgba(74, 144, 184, 0.3);
-            font-size: 0.8rem;
-            font-style: italic;
-            color: var(--secondary);
-            opacity: 0.9;
-            z-index: 2;
-            position: relative;
+            border-top: 1px solid var(--border-color);
         }
 
-        /* --- ANIMACIONES --- */
-        @keyframes fadeInUp {
-            0% {
-                opacity: 0;
-                transform: translateY(30px) scale(0.95);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
+        .modal-cerrar {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--primary-alpha);
+            border: none;
+            color: var(--primary);
+            font-size: 20px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
         }
 
-        @media (max-width: 900px) {
-            .instruction {
-                position: relative;
-                top: auto;
-                right: auto;
-                margin: 0 auto 20px auto;
-                display: block;
-                width: fit-content;
-            }
-            .filters { margin-top: 0; }
+        .modal-cerrar:hover {
+            background: var(--primary);
+            color: #FFFFFF;
+            transform: rotate(90deg);
         }
 
-        @media (max-width: 600px) {
-            .filters { gap: 10px; }
-            .filter-btn { padding: 10px 20px; font-size: 0.75rem; }
-            .grid { grid-template-columns: 1fr; }
+        /* Barra de desplazamiento personalizada */
+        .modal-contenido::-webkit-scrollbar {
+            width: 8px;
+        }
+        .modal-contenido::-webkit-scrollbar-track {
+            background: var(--primary-alpha);
+            border-radius: 10px;
+        }
+        .modal-contenido::-webkit-scrollbar-thumb {
+            background: var(--primary-light);
+            border-radius: 10px;
+        }
+
+        /* Animaciones */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animar-entrada {
+            opacity: 0;
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        /* Media queries para responsividad */
+        @media (max-width: 768px) {
+            .grid-conceptos {
+                grid-template-columns: 1fr;
+            }
+            .instruccion {
+                align-self: center;
+                font-size: 12px;
+                padding: 10px 18px;
+                margin-bottom: 20px;
+                text-align: center;
+            }
+            .btn-filtro {
+                padding: 10px 20px;
+                font-size: 13px;
+            }
+            .tarjeta-concepto {
+                padding: 20px;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            .tarjeta-concepto h3 {
+                font-size: 18px;
+                padding-right: 0;
+            }
+            .modal-contenido {
+                padding: 25px;
+            }
         }
     </style>
 </head>
 <body>
 
-    <!-- Instrucción en la parte superior derecha -->
-    <div class="instruction">
-        (Haga clic sobre cada concepto para ampliar la información.)
+    <!-- Fondo de cuadrícula sutil -->
+    <div class="background-grid"></div>
+
+    <div class="contenedor-principal">
+        
+        <!-- Instrucción -->
+        <div class="instruccion animar-entrada">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+            (Haga clic sobre cada concepto para ampliar la información.)
+        </div>
+
+        <!-- Filtros -->
+        <div class="filtros animar-entrada" style="animation-delay: 0.1s;">
+            <button class="btn-filtro activo" onclick="filtrar('todos', this)">Todos</button>
+            <button class="btn-filtro" onclick="filtrar('renovable', this)">Renovables</button>
+            <button class="btn-filtro" onclick="filtrar('no-renovable', this)">No Renovables</button>
+            <button class="btn-filtro" onclick="filtrar('vector', this)">Sistemas y Vectores</button>
+        </div>
+
+        <!-- Grid de conceptos -->
+        <div class="grid-conceptos" id="gridConceptos">
+            
+            <div class="tarjeta-concepto animar-entrada" style="animation-delay: 0.2s;" data-categoria="no-renovable" onclick="abrirModal('Combustibles fósiles', 'Los combustibles fósiles son recursos no renovables formados por la descomposición anaeróbica de organismos durante millones de años. Incluyen el carbón, el petróleo y el gas natural, y son la principal fuente de energía primaria a nivel mundial, aunque su uso genera grandes emisiones de CO₂.')">
+                <h3>Combustibles fósiles</h3>
+                <span class="etiqueta no-renovable">No Renovable</span>
+            </div>
+
+            <div class="tarjeta-concepto animar-entrada" style="animation-delay: 0.3s;" data-categoria="renovable" onclick="abrirModal('Energía de biomasa', 'La energía de biomasa se obtiene de materia orgánica (como residuos agrícolas, forestales o cultivos energéticos). Puede transformarse en electricidad, calor o biocombustibles mediante procesos como la combustión, gasificación o fermentación. Es renovable porque la materia orgánica puede regenerarse.')">
+                <h3>Energía de biomasa</h3>
+                <span class="etiqueta renovable">Renovable</span>
+            </div>
+
+            <div class="tarjeta-concepto animar-entrada" style="animation-delay: 0.4s;" data-categoria="vector" onclick="abrirModal('Energía del hidrógeno', 'El hidrógeno es un vector energético, no una fuente primaria. Se obtiene mediante procesos como el reformado de gas natural o la electrólisis del agua. Puede almacenarse y transportarse para luego convertirse en electricidad mediante pilas de combustible, emitiendo solo vapor de agua.')">
+                <h3>Energía del hidrógeno</h3>
+                <span class="etiqueta vector">Sistema / Vector</span>
+            </div>
+
+            <div class="tarjeta-concepto animar-entrada" style="animation-delay: 0.5s;" data-categoria="renovable" onclick="abrirModal('Energía eólica', 'La energía eólica aprovecha la fuerza del viento mediante aerogeneradores para producir electricidad. Es una fuente renovable, limpia y abundante, aunque su producción depende de la variabilidad del viento. Es una de las tecnologías de más rápido crecimiento en el mundo.')">
+                <h3>Energía eólica</h3>
+                <span class="etiqueta renovable">Renovable</span>
+            </div>
+
+            <div class="tarjeta-concepto animar-entrada" style="animation-delay: 0.6s;" data-categoria="renovable" onclick="abrirModal('Energía geotérmica', 'La energía geotérmica se obtiene del calor interno de la Tierra. Se utiliza para generar electricidad y para calefacción directa. Es una fuente renovable y constante, aunque su aprovechamiento está limitado a regiones con actividad tectónica o volcánica.')">
+                <h3>Energía geotérmica</h3>
+                <span class="etiqueta renovable">Renovable</span>
+            </div>
+
+            <div class="tarjeta-concepto animar-entrada" style="animation-delay: 0.7s;" data-categoria="renovable" onclick="abrirModal('Energía hidráulica', 'La energía hidráulica aprovecha la energía potencial del agua almacenada en embalses o en ríos para generar electricidad. Es una de las fuentes renovables más antiguas y utilizadas. Incluye las centrales hidroeléctricas de embalse y las de pasada.')">
+                <h3>Energía hidráulica</h3>
+                <span class="etiqueta renovable">Renovable</span>
+            </div>
+
+            <div class="tarjeta-concepto animar-entrada" style="animation-delay: 0.8s;" data-categoria="renovable" onclick="abrirModal('Energía solar', 'La energía solar se obtiene de la radiación del sol. Puede aprovecharse mediante tecnologías fotovoltaicas (para generar electricidad) o térmicas (para calentar fluidos). Es renovable, inagotable y su costo ha disminuido drásticamente en las últimas décadas.')">
+                <h3>Energía solar</h3>
+                <span class="etiqueta renovable">Renovable</span>
+            </div>
+
+            <div class="tarjeta-concepto animar-entrada" style="animation-delay: 0.9s;" data-categoria="no-renovable" onclick="abrirModal('Energía nuclear', 'La energía nuclear se obtiene a partir de la fisión de átomos de uranio. Es una fuente no renovable, ya que el uranio es un recurso limitado, pero genera grandes cantidades de electricidad con bajas emisiones de CO₂. Requiere una gestión rigurosa de los residuos radiactivos.')">
+                <h3>Energía nuclear</h3>
+                <span class="etiqueta no-renovable">No Renovable</span>
+            </div>
+
+            <div class="tarjeta-concepto animar-entrada" style="animation-delay: 1.0s;" data-categoria="no-renovable" onclick="abrirModal('Gas natural', 'El gas natural es un combustible fósil compuesto principalmente por metano. Se utiliza para generar electricidad, calefacción y en la industria. Aunque es menos contaminante que el carbón o el petróleo, sigue siendo una fuente no renovable y contribuye al efecto invernadero.')">
+                <h3>Gas natural</h3>
+                <span class="etiqueta no-renovable">No Renovable</span>
+            </div>
+
+            <div class="tarjeta-concepto animar-entrada" style="animation-delay: 1.1s;" data-categoria="no-renovable" onclick="abrirModal('Petróleo', 'El petróleo es un líquido natural inflamable compuesto por hidrocarburos. Es la principal fuente de energía primaria y materia prima para la industria petroquímica. Su combustión genera grandes emisiones de gases de efecto invernadero.')">
+                <h3>Petróleo</h3>
+                <span class="etiqueta no-renovable">No Renovable</span>
+            </div>
+
+            <div class="tarjeta-concepto animar-entrada" style="animation-delay: 1.2s;" data-categoria="vector" onclick="abrirModal('Electricidad', 'La electricidad es un vector energético fundamental en la transición energética. Permite transportar energía desde los centros de producción hasta los puntos de consumo. Puede generarse a partir de fuentes renovables y no renovables, y es clave para la descarbonización.')">
+                <h3>Electricidad</h3>
+                <span class="etiqueta vector">Sistema / Vector</span>
+            </div>
+
+        </div>
     </div>
 
-    <div class="filters">
-        <button class="filter-btn active" onclick="filterCards('all', this)">Todos</button>
-        <button class="filter-btn" onclick="filterCards('renovable', this)">Renovables</button>
-        <button class="filter-btn" onclick="filterCards('no-renovable', this)">No Renovables</button>
-        <button class="filter-btn" onclick="filterCards('sistema', this)">Sistemas y Vectores</button>
-    </div>
-
-    <div class="grid" id="glossaryGrid">
-        <!-- Las tarjetas se generan aquí -->
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay" onclick="cerrarModal(event)">
+        <div class="modal-contenido" onclick="event.stopPropagation()">
+            <button class="modal-cerrar" onclick="cerrarModal(event)">&times;</button>
+            <h2 id="modalTitulo"></h2>
+            <p id="modalTexto"></p>
+            <p class="fuente-modal" id="modalFuente"></p>
+        </div>
     </div>
 
     <script>
-        const terms = [
-            { title: "Combustibles fósiles", category: "no-renovable", badge: "No Renovable", definition: "Recursos no renovables (petróleo, carbón, gas natural) formados por descomposición orgánica durante millones de años.", bibliography: "Twidell & Weir, 2015" },
-            { title: "Energía de biomasa", category: "renovable", badge: "Renovable", definition: "Energía renovable obtenida de materia orgánica mediante procesos termoquímicos o biológicos para generación de calor, electricidad y biocombustibles.", bibliography: "Solé, 2014" },
-            { title: "Energía del hidrógeno", category: "sistema", badge: "Sistema / Vector", definition: "Sistema energético que utiliza hidrógeno como portador de energía, producido mediante electrólisis o reformado de hidrocarburos, para generación eléctrica o movilidad.", bibliography: "Linares & Moratilla, 2007" },
-            { title: "Energía eólica", category: "renovable", badge: "Renovable", definition: "Energía renovable obtenida del viento mediante aerogeneradores, requiriendo velocidades mínimas sostenidas para viabilidad comercial.", bibliography: "Solé, 2014" },
-            { title: "Energía geotérmica", category: "renovable", badge: "Renovable", definition: "Calor interno de la Tierra aprovechable como energía renovable, presente en forma de vapor, agua caliente o rocas secas calientes.", bibliography: "Jarabo & Elortegui, 2009; Ellabban & otros, 2014" },
-            { title: "Energía hidráulica", category: "renovable", badge: "Renovable", definition: "Energía renovable que aprovecha el movimiento o altura del agua para generar electricidad mediante turbinas.", bibliography: "Ellabban & otros, 2014" },
-            { title: "Energía nuclear", category: "no-renovable", badge: "No Renovable", definition: "Tecnología de generación eléctrica que aprovecha la fisión controlada de núcleos atómicos pesados, principalmente uranio-235 o plutonio-239, con bajas emisiones de carbono.", bibliography: "Nuclear Energy Agency, 2024; Poenaru & otros, 2022" },
-            { title: "Energía oceánica", category: "renovable", badge: "Renovable", definition: "Conjunto de tecnologías que aprovechan el potencial energético de los mares y océanos para generación eléctrica, incluyendo mareas, olas y gradientes térmicos.", bibliography: "Jarabo & Elortegui, 2009; Ellabban & otros, 2014" },
-            { title: "Energía primaria", category: "sistema", badge: "Sistema", definition: "Recursos energéticos obtenidos directamente de la naturaleza sin transformación previa, como combustibles fósiles, nucleares o renovables.", bibliography: "Jarabo & Elortegui, 2009" },
-            { title: "Energía secundaria", category: "sistema", badge: "Sistema", definition: "Formas energéticas resultantes de la transformación técnica de fuentes primarias, como electricidad o combustibles procesados.", bibliography: "Jarabo & Elortegui, 2009" },
-            { title: "Energía solar", category: "renovable", badge: "Renovable", definition: "Fuente renovable que convierte radiación solar en energía térmica o eléctrica mediante tecnologías fotovoltaicas y térmicas.", bibliography: "Solé, 2014" },
-            { title: "Energías renovables", category: "renovable", badge: "Renovable", definition: "Fuentes inagotables como solar, eólica o hidráulica, regeneradas naturalmente a corto plazo.", bibliography: "Twidell & Weir, 2015" },
-            { title: "Sistema energético", category: "sistema", badge: "Sistema", definition: "Red integrada que abarca extracción, conversión, distribución y consumo final de energía.", bibliography: "Twidell & Weir, 2015" },
-            { title: "Vector energético", category: "sistema", badge: "Sistema / Vector", definition: "Medio para transportar y almacenar energía, como electricidad o combustibles líquidos/gaseosos, que facilita la distribución de la energía entre fuentes y usos finales.", bibliography: "Orecchini, 2006" }
-        ];
+        // Función para filtrar tarjetas por categoría
+        function filtrar(categoria, boton) {
+            // Actualizar botón activo
+            document.querySelectorAll('.btn-filtro').forEach(btn => btn.classList.remove('activo'));
+            boton.classList.add('activo');
 
-        const grid = document.getElementById('glossaryGrid');
-
-        function renderCards(category = 'all') {
-            grid.innerHTML = '';
-            const filteredTerms = category === 'all' ? terms : terms.filter(term => term.category === category);
-
-            filteredTerms.forEach((term, index) => {
-                const card = document.createElement('div');
-                card.className = 'card';
-                card.style.animationDelay = `${index * 0.12}s`;
-                card.innerHTML = `
-                    <div class="card-header">
-                        <h3 class="card-title">${term.title}</h3>
-                        <span class="card-badge">${term.badge}</span>
-                    </div>
-                    <p class="card-content">${term.definition}</p>
-                    <div class="card-bibliography" style="display: none;">${term.bibliography}</div>
-                `;
-
-                card.addEventListener('click', () => {
-                    card.classList.toggle('expanded');
-                    const bib = card.querySelector('.card-bibliography');
-                    bib.style.display = card.classList.contains('expanded') ? 'block' : 'none';
-                });
-
-                grid.appendChild(card);
+            // Filtrar tarjetas
+            const tarjetas = document.querySelectorAll('.tarjeta-concepto');
+            tarjetas.forEach(tarjeta => {
+                const catTarjeta = tarjeta.getAttribute('data-categoria');
+                if (categoria === 'todos' || catTarjeta === categoria) {
+                    tarjeta.style.display = 'flex';
+                    // Reanimar entrada
+                    tarjeta.style.animation = 'none';
+                    tarjeta.offsetHeight; // Trigger reflow
+                    tarjeta.style.animation = 'fadeIn 0.6s ease forwards';
+                } else {
+                    tarjeta.style.display = 'none';
+                }
             });
         }
 
-        function filterCards(category, btn) {
-            const buttons = document.querySelectorAll('.filter-btn');
-            buttons.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            renderCards(category);
+        // Función para abrir el modal con información del concepto
+        function abrirModal(titulo, texto) {
+            const modal = document.getElementById('modalOverlay');
+            document.getElementById('modalTitulo').textContent = titulo;
+            document.getElementById('modalTexto').textContent = texto;
+            // Nota: Puedes agregar fuentes si lo deseas
+            document.getElementById('modalFuente').textContent = "Fuente: Glosario de Sistemas Energéticos";
+            
+            modal.classList.add('activo');
+            document.body.style.overflow = 'hidden'; // Evita scroll de fondo
         }
 
-        renderCards('all');
+        // Función para cerrar el modal
+        function cerrarModal(event) {
+            if (event) event.stopPropagation();
+            const modal = document.getElementById('modalOverlay');
+            modal.classList.remove('activo');
+            document.body.style.overflow = 'auto'; // Restaura scroll
+        }
+
+        // Cerrar modal con la tecla ESC
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                cerrarModal();
+            }
+        });
     </script>
+
 </body>
 </html>
