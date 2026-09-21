@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Procesos de Refinación - Línea de Tiempo Interactiva</title>
+    <style>
+        /* Paleta de colores basada en #582A51 */
+        :root {
+            --primary: #582A51;
+            --primary-dark: #3E1C39;
+            --primary-light: #7A3B71;
+            --primary-alpha: rgba(88, 42, 81, 0.05);
+            --bg-body: #F8F5F8;
+            --bg-card: #FFFFFF;
+            --text-dark: #2C1A2A;
+            --text-light: #7A5C76;
+            --border-color: #E0D0DF;
+            --shadow-color: rgba(88, 42, 81, 0.15);
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100vh;
+            background-color: var(--bg-body);
+            font-family: 'Segoe UI', Arial, sans-serif;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        /* Fondo con patrón de cuadrícula sutil */
+        .background-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(var(--border-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
+            background-size: 40px 40px;
+            opacity: 0.4;
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        .contenedor-principal {
+            width: 100%;
+            max-width: 1400px;
+            padding: 60px 40px 40px 40px;
+            box-sizing: border-box;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Instrucción en la parte superior derecha */
+        .instruccion {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            background: var(--bg-card);
+            color: var(--text-dark);
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 500;
+            box-shadow: 0 4px 15px var(--shadow-color);
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: fadeInDown 0.8s ease forwards;
+            z-index: 10;
+        }
+
+        .instruccion svg {
+            width: 16px;
+            height: 16px;
+            fill: var(--primary);
+        }
+
+        /* Línea de tiempo horizontal */
+        .linea-tiempo-horizontal {
+            position: relative;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 200px 0;
+        }
+
+        /* Línea central horizontal */
+        .linea-tiempo-horizontal::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 3px;
+            background-color: var(--primary-light);
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+            border-radius: 2px;
+            opacity: 0.4;
+            z-index: -1;
+        }
+
+        /* Cada estación */
+        .estacion {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 22%;
+            cursor: pointer;
+        }
+
+        /* El nodo cuadrado con número */
+        .nodo-numero-h {
+            width: 50px;
+            height: 50px;
+            background-color: var(--bg-card);
+            border: 3px solid var(--primary);
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 22px;
+            font-weight: bold;
+            color: var(--primary);
+            z-index: 2;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            position: relative;
+        }
+
+        /* Línea conectora vertical desde el nodo hacia el texto */
+        .conector {
+            position: absolute;
+            width: 2px;
+            background-color: var(--primary-light);
+            opacity: 0.5;
+            z-index: 1;
+        }
+
+        /* Conectores hacia arriba */
+        .estacion.arriba .conector {
+            height: 40px;
+            bottom: 50%;
+        }
+
+        /* Conectores hacia abajo */
+        .estacion.abajo .conector {
+            height: 40px;
+            top: 50%;
+        }
+
+        /* Contenedor de texto */
+        .contenido-h {
+            position: absolute;
+            width: 100%;
+            padding: 0 10px;
+            box-sizing: border-box;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        /* Texto posicionado arriba */
+        .estacion.arriba .contenido-h {
+            bottom: calc(50% + 60px);
+        }
+
+        /* Texto posicionado abajo */
+        .estacion.abajo .contenido-h {
+            top: calc(50% + 60px);
+        }
+
+        /* Título del proceso */
+        .contenido-h h3 {
+            color: var(--primary);
+            font-size: 20px;
+            font-weight: 700;
+            margin: 0 0 15px 0;
+        }
+
+        /* Texto descriptivo */
+        .contenido-h p {
+            color: var(--text-dark);
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        /* Ocultar texto largo inicialmente */
+        .texto-completo-h {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height 0.5s ease-out, opacity 0.5s ease-out, margin-top 0.5s ease-out;
+            margin-top: 0;
+        }
+
+        .estacion.expandido .texto-completo-h {
+            max-height: 400px;
+            opacity: 1;
+            margin-top: 10px;
+        }
+
+        /* Resumen corto */
+        .texto-resumen-h {
+            color: var(--text-light);
+            font-size: 13px;
+            font-style: italic;
+            transition: opacity 0.3s ease;
+        }
+
+        .estacion.expandido .texto-resumen-h {
+            display: none;
+        }
+
+        /* Efecto Hover y activo en el nodo */
+        .nodo-numero-h:hover, .nodo-numero-h.activo {
+            background-color: var(--primary);
+            color: #FFFFFF;
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px var(--shadow-color);
+        }
+
+        /* Animaciones de entrada */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animar-entrada {
+            opacity: 0;
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        /* Media queries para responsividad */
+        @media (max-width: 900px) {
+            .linea-tiempo-horizontal {
+                flex-direction: column;
+                padding: 0;
+                align-items: flex-start;
+            }
+            .linea-tiempo-horizontal::after {
+                width: 3px;
+                height: 100%;
+                left: 25px;
+                top: 0;
+                transform: none;
+            }
+            .estacion {
+                flex-direction: row;
+                width: 100%;
+                margin-bottom: 30px;
+                padding-left: 60px;
+                box-sizing: border-box;
+                align-items: flex-start;
+            }
+            .nodo-numero-h {
+                position: absolute;
+                left: 0;
+                top: 0;
+            }
+            .conector {
+                display: none;
+            }
+            .contenido-h {
+                position: relative;
+                width: 100%;
+                padding: 0;
+                text-align: left;
+            }
+            .estacion.arriba .contenido-h,
+            .estacion.abajo .contenido-h {
+                top: 0;
+                bottom: auto;
+            }
+            .contenido-h h3 {
+                margin-top: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Fondo de cuadrícula sutil -->
+    <div class="background-grid"></div>
+
+    <div class="contenedor-principal">
+        
+        <!-- Instrucción -->
+        <div class="instruccion">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+            Haga clic sobre cada proceso para ampliar la información
+        </div>
+
+        <!-- Línea de tiempo horizontal -->
+        <div class="linea-tiempo-horizontal">
+            
+            <!-- Estación 1: Destilación primaria (Arriba) -->
+            <div class="estacion arriba animar-entrada" style="animation-delay: 0.2s;" onclick="toggleEstacion(this)">
+                <div class="contenido-h">
+                    <h3>Destilación primaria</h3>
+                    <p class="texto-resumen-h">Separación de hidrocarburos por puntos de ebullición...</p>
+                    <p class="texto-completo-h">
+                        Es el proceso físico-químico en el cual se separa la mezcla de hidrocarburos en distintas fracciones (como gases, naftas, querosén, gasóleos, residuos, entre otros) según sus rangos de puntos de ebullición.
+                    </p>
+                </div>
+                <div class="conector"></div>
+                <div class="nodo-numero-h" onclick="toggleEstacion(event)">1</div>
+            </div>
+
+            <!-- Estación 2: Conversión (Abajo) -->
+            <div class="estacion abajo animar-entrada" style="animation-delay: 0.4s;" onclick="toggleEstacion(this)">
+                <div class="nodo-numero-h" onclick="toggleEstacion(event)">2</div>
+                <div class="conector"></div>
+                <div class="contenido-h">
+                    <h3>Conversión</h3>
+                    <p class="texto-resumen-h">Modificación molecular de fracciones pesadas...</p>
+                    <p class="texto-completo-h">
+                        Modifica la estructura molecular de las fracciones pesadas obtenidas en la destilación, transformándolas en productos más livianos y de mayor valor comercial, como gasolina, diésel y gas licuado del petróleo. Esto es realizado mediante procesos como craqueo catalítico, hidrocraqueo y reformado.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Estación 3: Tratamiento (Arriba) -->
+            <div class="estacion arriba animar-entrada" style="animation-delay: 0.6s;" onclick="toggleEstacion(this)">
+                <div class="contenido-h">
+                    <h3>Tratamiento</h3>
+                    <p class="texto-resumen-h">Eliminación de impurezas como azufre y metales...</p>
+                    <p class="texto-completo-h">
+                        Eliminación de impurezas como azufre, nitrógeno y metales mediante hidrotratamiento.
+                    </p>
+                </div>
+                <div class="conector"></div>
+                <div class="nodo-numero-h" onclick="toggleEstacion(event)">3</div>
+            </div>
+
+            <!-- Estación 4: Mezcla (Abajo) -->
+            <div class="estacion abajo animar-entrada" style="animation-delay: 0.8s;" onclick="toggleEstacion(this)">
+                <div class="nodo-numero-h" onclick="toggleEstacion(event)">4</div>
+                <div class="conector"></div>
+                <div class="contenido-h">
+                    <h3>Mezcla</h3>
+                    <p class="texto-resumen-h">Combinación para obtener productos comerciales...</p>
+                    <p class="texto-completo-h">
+                        Combinación de componentes para obtener productos comerciales con especificaciones estandarizadas.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Función mejorada para expandir o contraer el contenido
+        function toggleEstacion(elemento) {
+            // Si el clic fue en el nodo (evento), prevenimos la propagación
+            // y buscamos la estación padre correspondiente
+            let estacion;
+            if (elemento instanceof Event) {
+                elemento.stopPropagation();
+                estacion = elemento.currentTarget.parentElement;
+            } else {
+                estacion = elemento;
+            }
+
+            // Alternar la clase 'expandido' en la estación
+            estacion.classList.toggle('expandido');
+            
+            // Alternar la clase 'activo' en el nodo numérico
+            const nodo = estacion.querySelector('.nodo-numero-h');
+            if (nodo) {
+                nodo.classList.toggle('activo');
+            }
+        }
+    </script>
+
+</body>
+</html>
