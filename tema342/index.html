@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Procesos de la Biomasa - Dashboard Moderno</title>
+    <style>
+        /* Paleta de colores basada en #582A51 */
+        :root {
+            --primary: #582A51;
+            --primary-dark: #3E1C39;
+            --primary-light: #7A3B71;
+            --primary-alpha: rgba(88, 42, 81, 0.05);
+            --bg-body: #F8F5F8;
+            --bg-card: #FFFFFF;
+            --text-dark: #2C1A2A;
+            --text-light: #7A5C76;
+            --border-color: #E0D0DF;
+            --shadow-color: rgba(88, 42, 81, 0.15);
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100vh;
+            background-color: var(--bg-body);
+            font-family: 'Segoe UI', Arial, sans-serif;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            padding: 40px 20px;
+        }
+
+        /* Fondo con patrón de cuadrícula sutil */
+        .background-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(var(--border-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
+            background-size: 40px 40px;
+            opacity: 0.4;
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        .contenedor-principal {
+            width: 100%;
+            max-width: 1300px;
+            padding: 60px clamp(20px, 5vw, 60px);
+            box-sizing: border-box;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Instrucción en la parte superior derecha */
+        .instruccion {
+            position: absolute;
+            top: 10px;
+            right: clamp(20px, 5vw, 60px);
+            background: var(--bg-card);
+            color: var(--text-dark);
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 4px 15px var(--shadow-color);
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: fadeInDown 0.8s ease forwards;
+            z-index: 10;
+        }
+
+        .instruccion svg {
+            width: 18px;
+            height: 18px;
+            fill: var(--primary);
+        }
+
+        /* Grid de tarjetas */
+        .grid-procesos {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin-top: 50px;
+            perspective: 1500px;
+        }
+
+        /* ================= TARJETA ================= */
+        .tarjeta-proceso {
+            position: relative;
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 30px 30px 30px 35px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+            cursor: pointer;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+            opacity: 0;
+            animation: fadeInUp 0.6s ease forwards;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            box-sizing: border-box;
+        }
+
+        /* Barra lateral de acento */
+        .tarjeta-proceso::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 8px;
+            background: linear-gradient(180deg, var(--primary) 0%, var(--primary-light) 100%);
+            transition: width 0.4s ease;
+            z-index: 1;
+        }
+
+        /* Efecto hover */
+        .tarjeta-proceso:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px var(--shadow-color);
+            border-color: var(--primary-light);
+        }
+
+        .tarjeta-proceso:hover::before {
+            width: 12px;
+        }
+
+        /* Efecto Focus: cuando una tarjeta está activa, las demás se atenúan */
+        .grid-procesos.con-activa .tarjeta-proceso:not(.activa) {
+            opacity: 0.45;
+            filter: grayscale(0.6);
+            transform: scale(0.97);
+        }
+
+        /* Estado activo */
+        .tarjeta-proceso.activa {
+            box-shadow: 0 20px 45px var(--shadow-color);
+            border-color: var(--primary);
+            transform: scale(1.02);
+        }
+
+        .tarjeta-proceso.activa::before {
+            width: 12px;
+            background: var(--primary);
+        }
+
+        /* Ícono en la esquina superior derecha */
+        .icono-esquina {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, var(--primary-alpha) 0%, rgba(122, 59, 113, 0.1) 100%);
+            border: 1.5px solid var(--primary-light);
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 2;
+        }
+
+        .icono-esquina svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--primary);
+            transition: all 0.4s ease;
+        }
+
+        .tarjeta-proceso.activa .icono-esquina {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            border-color: var(--primary);
+            transform: scale(1.1) rotate(-8deg);
+            box-shadow: 0 6px 15px var(--shadow-color);
+        }
+
+        .tarjeta-proceso.activa .icono-esquina svg {
+            fill: #FFFFFF;
+        }
+
+        /* Título */
+        .titulo-proceso {
+            color: var(--primary);
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0 60px 20px 0;
+            line-height: 1.3;
+            transition: color 0.3s ease;
+        }
+
+        /* Texto resumen corto */
+        .texto-resumen {
+            color: var(--text-light);
+            font-size: 14px;
+            font-style: italic;
+            line-height: 1.6;
+            margin: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .tarjeta-proceso.activa .texto-resumen {
+            display: none;
+        }
+
+        /* Texto completo */
+        .texto-completo {
+            color: var(--text-dark);
+            font-size: 15px;
+            line-height: 1.75;
+            margin: 0;
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height 0.6s ease-out, opacity 0.5s ease-out, margin-top 0.5s ease-out;
+        }
+
+        .tarjeta-proceso.activa .texto-completo {
+            max-height: 500px;
+            opacity: 1;
+            margin-top: 5px;
+        }
+
+        /* Animaciones de entrada */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Media queries */
+        @media (max-width: 1024px) {
+            .grid-procesos {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .grid-procesos .tarjeta-proceso:last-child {
+                grid-column: span 2;
+                max-width: 50%;
+                margin: 0 auto;
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .contenedor-principal {
+                padding: 20px;
+            }
+            .instruccion {
+                position: relative;
+                top: 0;
+                right: 0;
+                margin: 0 auto 30px auto;
+                justify-content: center;
+                width: fit-content;
+                font-size: 12px;
+            }
+            .grid-procesos {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                margin-top: 20px;
+            }
+            .grid-procesos .tarjeta-proceso:last-child {
+                grid-column: span 1;
+                max-width: 100%;
+            }
+            .tarjeta-proceso {
+                padding: 25px 25px 25px 30px;
+            }
+            .titulo-proceso {
+                font-size: 19px;
+                margin-right: 55px;
+            }
+            .icono-esquina {
+                width: 40px;
+                height: 40px;
+            }
+            .icono-esquina svg {
+                width: 20px;
+                height: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Fondo de cuadrícula sutil -->
+    <div class="background-grid"></div>
+
+    <div class="contenedor-principal">
+        
+        <!-- Instrucción -->
+        <div class="instruccion">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+            Haga clic sobre cada proceso para ampliar la información
+        </div>
+
+        <!-- Grid de tarjetas -->
+        <div class="grid-procesos" id="gridProcesos">
+            
+            <!-- Combustión directa -->
+            <div class="tarjeta-proceso animar-entrada" style="animation-delay: 0.2s;" onclick="toggleProceso(this)">
+                <div class="icono-esquina">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z"/>
+                    </svg>
+                </div>
+                <h3 class="titulo-proceso">Combustión directa</h3>
+                <p class="texto-resumen">Utiliza residuos agrícolas, forestales e industriales para generar energía térmica...</p>
+                <p class="texto-completo">
+                    Utiliza residuos agrícolas, forestales e industriales (como madera y papel) para generar energía térmica mediante la quema controlada de biomasa.
+                </p>
+            </div>
+
+            <!-- Conversión biológica -->
+            <div class="tarjeta-proceso animar-entrada" style="animation-delay: 0.4s;" onclick="toggleProceso(this)">
+                <div class="icono-esquina">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                    </svg>
+                </div>
+                <h3 class="titulo-proceso">Conversión biológica</h3>
+                <p class="texto-resumen">Incluye la digestión anaerobia, la fermentación y la producción biológica de hidrógeno...</p>
+                <p class="texto-completo">
+                    Incluye la digestión anaerobia, que produce biogás mediante descomposición bacteriana en tres etapas (hidrólisis, acidogénesis y metanogénesis); la fermentación para obtener bioetanol mediante enzimas microbianas; y la producción biológica de hidrógeno mediante microorganismos, como algas y bacterias, bajo condiciones anaerobias.
+                </p>
+            </div>
+
+            <!-- Procesos térmicos -->
+            <div class="tarjeta-proceso animar-entrada" style="animation-delay: 0.6s;" onclick="toggleProceso(this)">
+                <div class="icono-esquina">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M11 21h-1l1-7H7.5c-.58 0-.57-.32-.38-.66.19-.34.05-.08.07-.12C8.48 10.94 10.42 7.54 13 3h1l-1 7h3.5c.49 0 .56.33.47.51l-.07.15C12.96 17.55 11 21 11 21z"/>
+                    </svg>
+                </div>
+                <h3 class="titulo-proceso">Procesos térmicos</h3>
+                <p class="texto-resumen">Abarcan la pirólisis y la gasificación, con rendimientos de hasta 40%...</p>
+                <p class="texto-completo">
+                    Abarcan la pirólisis, que descompone biomasa sin oxígeno entre 200 °C y 500 °C, generando gas, líquidos y coque; y la gasificación, que convierte biomasa en gas combustible mediante diversas tecnologías, con rendimientos de hasta 40 % y menor impacto ambiental.
+                </p>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Función para expandir o contraer la tarjeta y aplicar efecto focus
+        function toggleProceso(elemento) {
+            const grid = document.getElementById('gridProcesos');
+            const estaActiva = elemento.classList.contains('activa');
+            
+            if (estaActiva) {
+                elemento.classList.remove('activa');
+                grid.classList.remove('con-activa');
+            } else {
+                document.querySelectorAll('.tarjeta-proceso').forEach(t => t.classList.remove('activa'));
+                elemento.classList.add('activa');
+                grid.classList.add('con-activa');
+            }
+        }
+    </script>
+
+</body>
+</html>
