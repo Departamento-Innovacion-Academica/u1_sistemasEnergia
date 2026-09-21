@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clasificación de Centrales Hidroeléctricas</title>
+    <style>
+        /* Paleta de colores basada en #582A51 */
+        :root {
+            --primary: #582A51;
+            --primary-dark: #3E1C39;
+            --primary-light: #7A3B71;
+            --primary-alpha: rgba(88, 42, 81, 0.05);
+            --bg-body: #F8F5F8;
+            --bg-card: #FFFFFF;
+            --text-dark: #2C1A2A;
+            --text-light: #7A5C76;
+            --border-color: #E0D0DF;
+            --shadow-color: rgba(88, 42, 81, 0.15);
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100vh;
+            background-color: var(--bg-body);
+            font-family: 'Segoe UI', Arial, sans-serif;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            padding: 40px 20px;
+        }
+
+        /* Fondo con patrón de cuadrícula sutil */
+        .background-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(var(--border-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
+            background-size: 40px 40px;
+            opacity: 0.4;
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        .contenedor-principal {
+            width: 100%;
+            max-width: 1200px;
+            padding: 60px clamp(20px, 5vw, 60px);
+            box-sizing: border-box;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Instrucción en la parte superior derecha */
+        .instruccion {
+            position: absolute;
+            top: 10px;
+            right: clamp(20px, 5vw, 60px);
+            background: var(--bg-card);
+            color: var(--text-dark);
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 4px 15px var(--shadow-color);
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: fadeInDown 0.8s ease forwards;
+            z-index: 10;
+        }
+
+        .instruccion svg {
+            width: 18px;
+            height: 18px;
+            fill: var(--primary);
+        }
+
+        /* Grid de centrales */
+        .grid-centrales {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        /* ================= TARJETA ================= */
+        .tarjeta-central {
+            position: relative;
+            background: var(--bg-card);
+            border-radius: 18px;
+            padding: 35px 35px 35px 55px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+            cursor: pointer;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+            opacity: 0;
+            animation: fadeInUp 0.6s ease forwards;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 180px;
+        }
+
+        /* Barra lateral de acento */
+        .tarjeta-central::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 10px;
+            background: linear-gradient(180deg, var(--primary) 0%, var(--primary-light) 100%);
+            border-radius: 18px 0 0 18px;
+            transition: width 0.4s ease;
+            z-index: 1;
+        }
+
+        /* Efecto hover */
+        .tarjeta-central:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px var(--shadow-color);
+            border-color: var(--primary-light);
+        }
+
+        .tarjeta-central:hover::before {
+            width: 14px;
+        }
+
+        /* Estado activo/expandido */
+        .tarjeta-central.activa {
+            box-shadow: 0 20px 45px var(--shadow-color);
+            border-color: var(--primary);
+            transform: scale(1.02);
+        }
+
+        .tarjeta-central.activa::before {
+            width: 14px;
+            background: var(--primary);
+        }
+
+        /* Atenuar tarjetas hermanas cuando una está activa */
+        .grid-centrales.con-activa .tarjeta-central:not(.activa) {
+            opacity: 0.5;
+            filter: grayscale(0.5);
+            transform: scale(0.98);
+        }
+
+        /* Contenido de la tarjeta */
+        .contenido-central {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Título */
+        .titulo-central {
+            color: var(--primary);
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0 0 15px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Ícono de flecha */
+        .indicador-flecha {
+            margin-left: auto;
+            font-size: 14px;
+            color: var(--primary-light);
+            transition: transform 0.4s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            background-color: var(--primary-alpha);
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .tarjeta-central.activa .indicador-flecha {
+            transform: rotate(180deg);
+            background-color: var(--primary);
+            color: #FFFFFF;
+        }
+
+        /* Texto resumen (corto) */
+        .texto-central {
+            color: var(--text-dark);
+            font-size: 16px;
+            line-height: 1.7;
+            margin: 0;
+        }
+
+        /* Texto completo oculto inicialmente */
+        .texto-completo-central {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height 0.6s ease-out, opacity 0.5s ease-out, margin-top 0.5s ease-out;
+            margin-top: 0;
+            color: var(--text-dark);
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        .tarjeta-central.activa .texto-completo-central {
+            max-height: 300px;
+            opacity: 1;
+            margin-top: 15px;
+        }
+
+        /* Texto resumen se oculta al expandir */
+        .tarjeta-central.activa .texto-central {
+            display: none;
+        }
+
+        /* Animaciones de entrada */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Media queries para responsividad */
+        @media (max-width: 768px) {
+            .contenedor-principal {
+                padding: 20px;
+            }
+            .instruccion {
+                position: relative;
+                top: 0;
+                right: 0;
+                margin: 0 auto 30px auto;
+                justify-content: center;
+                width: fit-content;
+                font-size: 12px;
+            }
+            .grid-centrales {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                margin-top: 20px;
+            }
+            .tarjeta-central {
+                padding: 25px 25px 25px 40px;
+                min-height: auto;
+            }
+            .tarjeta-central::before {
+                width: 8px;
+            }
+            .titulo-central {
+                font-size: 20px;
+            }
+            .texto-central, .texto-completo-central {
+                font-size: 14px;
+            }
+            .indicador-flecha {
+                width: 26px;
+                height: 26px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Fondo de cuadrícula sutil -->
+    <div class="background-grid"></div>
+
+    <div class="contenedor-principal">
+        
+        <!-- Instrucción -->
+        <div class="instruccion">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+            Haga clic sobre cada central para ampliar la información
+        </div>
+
+        <!-- Grid de centrales -->
+        <div class="grid-centrales" id="gridCentrales">
+            
+            <!-- Grandes centrales -->
+            <div class="tarjeta-central animar-entrada" style="animation-delay: 0.2s;" onclick="toggleCentral(this)">
+                <div class="contenido-central">
+                    <h3 class="titulo-central">
+                        Grandes centrales
+                        <span class="indicador-flecha">▼</span>
+                    </h3>
+                    <p class="texto-central">Con potencia superior a 5 MW...</p>
+                    <p class="texto-completo-central">
+                        Con potencia superior a 5 MW. Estas centrales representan la mayor parte de la capacidad instalada hidroeléctrica a nivel mundial y suelen estar asociadas a grandes embalses.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Pequeñas centrales -->
+            <div class="tarjeta-central animar-entrada" style="animation-delay: 0.4s;" onclick="toggleCentral(this)">
+                <div class="contenido-central">
+                    <h3 class="titulo-central">
+                        Pequeñas centrales
+                        <span class="indicador-flecha">▼</span>
+                    </h3>
+                    <p class="texto-central">De entre 1 MW y 5 MW, requieren el almacenamiento de agua...</p>
+                    <p class="texto-completo-central">
+                        De entre 1 MW y 5 MW, requieren el almacenamiento de agua en pantanos o presas de gran capacidad.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Centrales minihidráulicas -->
+            <div class="tarjeta-central animar-entrada" style="animation-delay: 0.6s;" onclick="toggleCentral(this)">
+                <div class="contenido-central">
+                    <h3 class="titulo-central">
+                        Centrales minihidráulicas
+                        <span class="indicador-flecha">▼</span>
+                    </h3>
+                    <p class="texto-central">Con potencia entre 100 kW y 1 MW, aprovechan desniveles naturales...</p>
+                    <p class="texto-completo-central">
+                        Con potencia entre 100 kW y 1 MW, aprovechan directamente los desniveles naturales de los ríos o utilizan pequeños embalses, lo que reduce considerablemente el impacto ambiental.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Microcentrales -->
+            <div class="tarjeta-central animar-entrada" style="animation-delay: 0.8s;" onclick="toggleCentral(this)">
+                <div class="contenido-central">
+                    <h3 class="titulo-central">
+                        Microcentrales
+                        <span class="indicador-flecha">▼</span>
+                    </h3>
+                    <p class="texto-central">Con potencias entre 1,5 kW y 100 kW, la opción más sostenible...</p>
+                    <p class="texto-completo-central">
+                        Con potencias entre 1,5 kW y 100 kW, representan la opción más sostenible, ya que no requieren construcción de presas y emplean tecnologías sencillas y económicas.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Función para expandir o contraer la tarjeta y aplicar efecto "focus"
+        function toggleCentral(elemento) {
+            const grid = document.getElementById('gridCentrales');
+            const estaActiva = elemento.classList.contains('activa');
+            
+            // Si ya está activa, la cerramos
+            if (estaActiva) {
+                elemento.classList.remove('activa');
+                grid.classList.remove('con-activa');
+            } else {
+                // Si no está activa, primero quitamos la clase activa a todas
+                document.querySelectorAll('.tarjeta-central').forEach(t => t.classList.remove('activa'));
+                // Luego activamos la seleccionada
+                elemento.classList.add('activa');
+                grid.classList.add('con-activa');
+            }
+        }
+    </script>
+
+</body>
+</html>
