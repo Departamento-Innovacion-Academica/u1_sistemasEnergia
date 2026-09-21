@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conceptos de Física - Tarjetas Interactivas</title>
+    <style>
+        /* Paleta de colores basada en #582A51 */
+        :root {
+            --primary: #582A51;
+            --primary-dark: #3E1C39;
+            --primary-light: #7A3B71;
+            --primary-alpha: rgba(88, 42, 81, 0.05);
+            --bg-body: #F8F5F8;
+            --bg-card: #FFFFFF;
+            --text-dark: #2C1A2A;
+            --text-light: #7A5C76;
+            --border-color: #E0D0DF;
+            --shadow-color: rgba(88, 42, 81, 0.15);
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100vh;
+            background-color: var(--bg-body);
+            font-family: 'Segoe UI', Arial, sans-serif;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Fondo con patrón de cuadrícula sutil */
+        .background-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(var(--border-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
+            background-size: 40px 40px;
+            opacity: 0.4;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .contenedor-principal {
+            width: 100%;
+            max-width: 1200px;
+            padding: 40px clamp(20px, 5vw, 60px);
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        /* Instrucción en la parte superior derecha */
+        .instruccion {
+            position: absolute;
+            top: 10px;
+            right: clamp(20px, 5vw, 60px);
+            background: var(--bg-card);
+            color: var(--text-dark);
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 4px 15px var(--shadow-color);
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: fadeInDown 0.8s ease forwards;
+            z-index: 10;
+        }
+
+        .instruccion svg {
+            width: 18px;
+            height: 18px;
+            fill: var(--primary);
+        }
+
+        /* Grid de tarjetas */
+        .grid-tarjetas {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            width: 100%;
+            margin-top: 60px;
+            perspective: 1500px; /* Necesario para el efecto 3D */
+        }
+
+        /* Contenedor de cada tarjeta (para el efecto flip) */
+        .tarjeta-flip {
+            background-color: transparent;
+            width: 100%;
+            height: 450px; /* Altura fija para que el flip se vea bien */
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        /* El elemento interno que gira */
+        .tarjeta-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+        }
+
+        .tarjeta-flip.volteada .tarjeta-inner {
+            transform: rotateY(180deg);
+        }
+
+        /* Caras frontal y trasera */
+        .tarjeta-frontal, .tarjeta-trasera {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden; /* Safari */
+            backface-visibility: hidden;
+            border-radius: 20px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            border: 2px solid var(--primary-light);
+        }
+
+        /* Estilo de la cara frontal */
+        .tarjeta-frontal {
+            background-color: var(--bg-card);
+        }
+
+        /* Estilo de la cara trasera */
+        .tarjeta-trasera {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+            color: #FFFFFF;
+            transform: rotateY(180deg);
+            border-color: var(--primary-dark);
+        }
+
+        /* Elementos de la cara frontal */
+        .numero-circulo {
+            width: 70px;
+            height: 70px;
+            background-color: var(--primary);
+            color: #FFFFFF;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 20px var(--shadow-color);
+        }
+
+        .tarjeta-frontal h3 {
+            color: var(--primary);
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0 0 20px 0;
+        }
+
+        .tarjeta-frontal p {
+            color: var(--text-dark);
+            font-size: 17px;
+            line-height: 1.6;
+            margin: 0;
+            text-align: center;
+        }
+
+        /* Elementos de la cara trasera */
+        .tarjeta-trasera h4 {
+            font-size: 22px;
+            margin-bottom: 20px;
+            color: #FFFFFF;
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+            padding-bottom: 10px;
+        }
+
+        .tarjeta-trasera p {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .formula-box {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(5px);
+            padding: 15px 20px;
+            border-radius: 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 20px;
+            border: 1px solid rgba(255,255,255,0.3);
+            color: #FFFFFF;
+        }
+
+        /* Animaciones de entrada */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animar-entrada {
+            opacity: 0;
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Media queries para responsividad */
+        @media (max-width: 1024px) {
+            .grid-tarjetas {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .tarjeta-flip:last-child {
+                grid-column: span 2;
+                max-width: 50%;
+                margin: 0 auto;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .contenedor-principal {
+                padding: 20px;
+            }
+            .instruccion {
+                position: relative;
+                top: 0;
+                right: 0;
+                margin: 0 auto 20px auto;
+                justify-content: center;
+                width: fit-content;
+                font-size: 12px;
+            }
+            .grid-tarjetas {
+                grid-template-columns: 1fr;
+                margin-top: 20px;
+            }
+            .tarjeta-flip:last-child {
+                grid-column: span 1;
+                max-width: 100%;
+            }
+            .tarjeta-flip {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Fondo de cuadrícula sutil -->
+    <div class="background-grid"></div>
+
+    <div class="contenedor-principal">
+        
+        <!-- Instrucción -->
+        <div class="instruccion">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+            Haga clic sobre cada tarjeta para ver la fórmula
+        </div>
+
+        <!-- Grid de tarjetas -->
+        <div class="grid-tarjetas">
+            
+            <!-- Tarjeta 1: Trabajo -->
+            <div class="tarjeta-flip animar-entrada" style="animation-delay: 0.2s;" onclick="voltearTarjeta(this)">
+                <div class="tarjeta-inner">
+                    <!-- Cara Frontal -->
+                    <div class="tarjeta-frontal">
+                        <div class="numero-circulo">1</div>
+                        <h3>Trabajo</h3>
+                        <p>El trabajo es el cambio en el estado de movimiento de un cuerpo debido a una fuerza, medido en Joules.</p>
+                    </div>
+                    <!-- Cara Trasera -->
+                    <div class="tarjeta-trasera">
+                        <h4>Fórmula</h4>
+                        <p>El trabajo se calcula como el producto de la fuerza aplicada por la distancia recorrida en la dirección de la fuerza.</p>
+                        <div class="formula-box">
+                            W = F · d
+                        </div>
+                        <p style="margin-top: 15px; font-size: 14px;">W = Trabajo (J)<br>F = Fuerza (N)<br>d = Distancia (m)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tarjeta 2: Potencia -->
+            <div class="tarjeta-flip animar-entrada" style="animation-delay: 0.4s;" onclick="voltearTarjeta(this)">
+                <div class="tarjeta-inner">
+                    <!-- Cara Frontal -->
+                    <div class="tarjeta-frontal">
+                        <div class="numero-circulo">2</div>
+                        <h3>Potencia</h3>
+                        <p>La potencia es la tasa a la que se realiza trabajo o se transfiere energía, medida en vatios (W), donde 1 W = 1 J/s.</p>
+                    </div>
+                    <!-- Cara Trasera -->
+                    <div class="tarjeta-trasera">
+                        <h4>Fórmula</h4>
+                        <p>La potencia relaciona el trabajo realizado con el tiempo empleado en realizarlo.</p>
+                        <div class="formula-box">
+                            P = W / t
+                        </div>
+                        <p style="margin-top: 15px; font-size: 14px;">P = Potencia (W)<br>W = Trabajo (J)<br>t = Tiempo (s)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tarjeta 3: Energía -->
+            <div class="tarjeta-flip animar-entrada" style="animation-delay: 0.6s;" onclick="voltearTarjeta(this)">
+                <div class="tarjeta-inner">
+                    <!-- Cara Frontal -->
+                    <div class="tarjeta-frontal">
+                        <div class="numero-circulo">3</div>
+                        <h3>Energía</h3>
+                        <p>La energía es la capacidad de un sistema para realizar trabajo; es medida en Joules (J), donde 1 J equivale a la energía transferida al aplicar una fuerza de 1 newton sobre una distancia de 1 metro.</p>
+                    </div>
+                    <!-- Cara Trasera -->
+                    <div class="tarjeta-trasera">
+                        <h4>Equivalencia</h4>
+                        <p>La energía se transfiere cuando se aplica una fuerza a lo largo de una distancia.</p>
+                        <div class="formula-box">
+                            1 J = 1 N·m
+                        </div>
+                        <p style="margin-top: 15px; font-size: 14px;">1 Joule = 1 Newton × 1 metro</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Función para voltear la tarjeta al hacer clic
+        function voltearTarjeta(elemento) {
+            elemento.classList.toggle('volteada');
+        }
+    </script>
+
+</body>
+</html>
